@@ -23,7 +23,9 @@
     "vue": "catalog:",
     "@ui-sdk/solid": "workspace:*",
     "solid-js": "catalog:",
-    "@solidjs/web": "catalog:"
+    "@solidjs/web": "catalog:",
+    "@ui-sdk/octane": "workspace:*",
+    "octane": "0.18.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "catalog:",
@@ -37,6 +39,7 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vue-tsc": "catalog:",
-    "@solidjs/vite-plugin": "catalog:"
+    "@solidjs/vite-plugin": "catalog:",
+    "@tsrx/oxc": "0.24.0"
   }
 }
