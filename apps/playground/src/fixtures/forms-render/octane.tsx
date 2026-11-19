@@ -65,7 +65,7 @@ function Fixture() {
           <FieldLabel>Nickname</FieldLabel>
           <FieldControl
             value={nickname}
-            onChange={(event) => setNickname(event.currentTarget.value)}
+            onInput={(event) => setNickname(event.currentTarget.value)}
           />
         </Field>
       </form>

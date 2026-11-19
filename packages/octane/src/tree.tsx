@@ -1,4 +1,10 @@
 /** @jsxImportSource octane */
+import { descriptorChildren } from "octane"
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   tree as treePrimitive,
   type TreeItemData,
@@ -112,9 +118,10 @@ function Tree<Mode extends TreeMode = "single">({
   // Without children, a data tree renders its items.
   const data = readIn(tree, () => tree.api.internal.items())
   const content = children ?? (data && <TreeItems items={data} />)
+  const jsxHook0 = usePart(tree, "root", {}, { ...props, children: content })
   return (
     <ItemContext value={null}>
-      {usePart(tree, "root", {}, { ...props, children: content })}
+      {jsxHook0}
     </ItemContext>
   )
 }
@@ -125,7 +132,7 @@ function Tree<Mode extends TreeMode = "single">({
  * load later, or whose group is inside a component of your own.
  * @stable
  */
-function TreeItem({
+const TreeItem = descriptorChildren(function TreeItem({
   value,
   branch,
   disabled,
@@ -141,18 +148,19 @@ function TreeItem({
     // A branch is one with a group among its children.
     branch:
       branch ??
-      (typeof children === "function"
+      (isStateFunction(children)
         ? undefined
         : hasChild(children, TreeGroup) || undefined),
     disabled,
     label,
   }
+  const jsxHook1 = usePart(treePrimitive, "item", item, { ...props, children })
   return (
     <ItemContext value={value}>
-      {usePart(treePrimitive, "item", item, { ...props, children })}
+      {jsxHook1}
     </ItemContext>
   )
-}
+})
 
 /**
  * The item's text, which names it. Render it as a link to make the item one.

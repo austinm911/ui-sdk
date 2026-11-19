@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   calendar as calendarPrimitive,
   type CalendarDayState,
@@ -128,10 +133,11 @@ function Calendar({
     ) : (
       children
     )
+  const jsxHook0 = usePart(calendar, "root", {}, { ...props, children: content })
   return (
     // In a context of its own, since a Date Picker renders the same parts over its own primitive.
     <CalendarContext value={calendar}>
-      {usePart(calendar, "root", {}, { ...props, children: content })}
+      {jsxHook0}
     </CalendarContext>
   )
 }
@@ -248,7 +254,7 @@ function CalendarGrid({
   // Grids are told apart by their offset. The parts inside read the grid's state.
   const content = (state: CalendarGridState) => (
     <GridScope offset={offset} state={state}>
-      {typeof children === "function" ? children(state) : children}
+      {isStateFunction(children) ? children(state) : children}
     </GridScope>
   )
   return usePart(

@@ -104,10 +104,11 @@ function Field({
     () => extendHandle(field, { name, disabled }),
     [field, name, disabled]
   )
+  const jsxHook0 = usePart(field, "root", {}, props, "div")
   return (
     <FieldContext value={context}>
       <DescribedContext value={field}>
-        {usePart(field, "root", {}, props, "div")}
+        {jsxHook0}
       </DescribedContext>
     </FieldContext>
   )
@@ -230,9 +231,10 @@ function FieldSet({
   ...props
 }: FieldSetOptions & Omit<PartProps<"fieldset", FieldSetState>, "disabled">) {
   const set = usePrimitive(fieldSet, { disabled, debug })
+  const jsxHook1 = usePart(set, "set", {}, props, "fieldset")
   return (
     <DescribedContext value={set}>
-      {usePart(set, "set", {}, props, "fieldset")}
+      {jsxHook1}
     </DescribedContext>
   )
 }

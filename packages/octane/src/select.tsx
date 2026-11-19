@@ -1,4 +1,10 @@
 /** @jsxImportSource octane */
+import { descriptorChildren } from "octane"
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   select as selectPrimitive,
   type ListData,
@@ -95,7 +101,7 @@ type SelectProps<
  * `multiple` makes the value a list.
  * @stable
  */
-function Select<T = string, Multiple extends boolean | undefined = false>({
+const Select = descriptorChildren(function Select<T = string, Multiple extends boolean | undefined = false>({
   children,
   container,
   ...options
@@ -124,7 +130,7 @@ function Select<T = string, Multiple extends boolean | undefined = false>({
       </ContainerContext>
     </HandleScope>
   )
-}
+})
 
 /**
  * A visible label for the select. Pressing it focuses the trigger, like a native select's label.
@@ -249,7 +255,7 @@ function ValuePart({
   const select = useSelect()
   const { placeholder } = part
   const content = (state: SelectValueState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : (children ??
         (state.placeholder
@@ -300,7 +306,7 @@ function SelectContent({
   // Reading the part's state subscribes, so items that arrive after the
   // select rendered still render. `select.state` doesn't subscribe.
   const body = (state: SelectContentState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : (children ??
         (state.items && select.state.items && (
@@ -345,7 +351,7 @@ function SelectEmpty({
   ...props
 }: PartProps<"div", SelectEmptyState>) {
   const content = (state: SelectEmptyState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : state.empty
         ? children
@@ -371,7 +377,7 @@ const SelectItem = parts.Item as <T = string>(
  * The item's text, with the part the search matched in `<mark>`. Without string content, it shows the item's label.
  * @stable
  */
-function SelectItemText({
+const SelectItemText = descriptorChildren(function SelectItemText({
   children,
   ...props
 }: PartProps<"span", SelectItemTextState>) {
@@ -382,7 +388,7 @@ function SelectItemText({
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
   const content =
-    typeof children === "function"
+    isStateFunction(children)
       ? children
       : (state: SelectItemTextState) => markSegments(state.segments)
   return usePart(
@@ -392,7 +398,7 @@ function SelectItemText({
     { ...props, children: content },
     "span"
   )
-}
+})
 
 /**
  * An option that selects every item that matches, with `multiple`: in its group inside a `SelectGroup`, or in the whole list.

@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   numberInput as numberInputPrimitive,
   type NumberInputOptions,
@@ -108,13 +113,14 @@ function NumberInput({
   useControllerEntry(controller, context)
   const content = (current: NumberInputState) => (
     <>
-      {typeof children === "function" ? children(current) : children}
+      {isStateFunction(children) ? children(current) : children}
       <HiddenInput />
     </>
   )
+  const jsxHook0 = usePart(numberInput, "root", {}, { ...props, children: content })
   return (
     <NumberInputContext value={context}>
-      {usePart(numberInput, "root", {}, { ...props, children: content })}
+      {jsxHook0}
     </NumberInputContext>
   )
 }

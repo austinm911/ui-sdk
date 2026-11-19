@@ -64,9 +64,120 @@ const replaceOnce = (source, before, after) => {
   return source.replace(before, after)
 }
 
+// Octane has no synthetic onChange: text controls fire onInput per keystroke.
+const inputEvent = (source) => replaceOnce(source, 'input: "onChange",', 'input: "onInput",')
+
 const OVERRIDES = {
-  "use-primitive.tsx": (source) => oneIdPerPart(nativeEvents(source)),
+  "use-primitive.tsx": (source) => inputEvent(oneIdPerPart(nativeEvents(source))),
   "button.tsx": nativeEvents,
+}
+
+// Octane compiles JSX children into a render function, so "children is a function"
+// no longer means a function of the part's state. `isStateFunction` excludes them.
+const childrenTest = /typeof ((?:[\w.?]+\.)?children) === "function"/g
+const stateFunctionHelper = `import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
+`
+const stateFunctions = (source) => {
+  if (!source.match(childrenTest)) return source
+  return stateFunctionHelper + source.replace(childrenTest, "isStateFunction($1)")
+}
+
+// React runs a hook with no dependency list on every render. Octane infers one
+// from the closure instead, and \`null\` means every render, so each such call
+// gets \`null\`. Scans to the call's closing paren, skipping strings and comments.
+const everyRender = /\b(?:React\.)?(useEffect|useLayoutEffect|useInsertionEffect|useImperativeHandle)\(/g
+const argCount = { useEffect: 1, useLayoutEffect: 1, useInsertionEffect: 1, useImperativeHandle: 2 }
+// Index of the paren, bracket or brace that closes the one before \`i\`, and the
+// top-level argument count, skipping strings and comments.
+const closing = (source, i) => {
+  let depth = 0
+  let args = 1
+  for (; i < source.length; i++) {
+    const c = source[i]
+    if (c === "/" && source[i + 1] === "/") i = source.indexOf("\n", i)
+    else if (c === "/" && source[i + 1] === "*") i = source.indexOf("*/", i) + 1
+    else if (c === '"' || c === "'" || c === "\`") {
+      for (i++; source[i] !== c; i++) if (source[i] === "\\") i++
+    } else if ("([{".includes(c)) depth++
+    else if (")]}".includes(c)) {
+      if (depth === 0) return { end: i, args }
+      depth--
+    } else if (c === "," && depth === 0 && source.slice(i + 1).trimStart()[0] !== ")") args++
+  }
+  throw new Error("octane-port: unbalanced call")
+}
+
+const reactDeps = (source) => {
+  let out = ""
+  let last = 0
+  for (const match of source.matchAll(everyRender)) {
+    const { end: close, args } = closing(source, match.index + match[0].length)
+    if (args === argCount[match[1]]) {
+      const end = source.slice(0, close).trimEnd().replace(/,$/, "").length
+      out += source.slice(last, end) + ", null"
+      last = end
+    }
+  }
+  return out + source.slice(last)
+}
+
+// React runs a hook written as a JSX child, like \`<Context value>{usePart(...)}</Context>\`,
+// while the component renders. Octane compiles children into a scope of their own,
+// which then owns the hook's state, so the call moves above the \`return\`.
+const jsxHook = /\{\s*((?:React\.)?use[A-Z]\w*)\(/g
+const hoistJsxHooks = (source) => {
+  let count = 0
+  for (let match; (match = jsxHook.exec(source)); ) {
+    const open = match.index + match[0].length
+    const { end } = closing(source, open)
+    const after = source.slice(end + 1).trimStart()
+    // A JSX child follows a tag or another hoisted child.
+    const before = source.slice(0, match.index).trimEnd()
+    if (after[0] !== "}" || !(before.endsWith(">") || /\{jsxHook\d+\}$/.test(before))) continue
+    const call = source.slice(match.index + 1, end + 1).trim()
+    const ret = source.lastIndexOf("\n", source.lastIndexOf("return", match.index)) + 1
+    const indent = source.slice(ret).match(/^\s*/)[0]
+    const name = `jsxHook${count++}`
+    const closeBrace = source.indexOf("}", end + 1)
+    source =
+      source.slice(0, ret) +
+      `${indent}const ${name} = ${call}\n` +
+      source.slice(ret, match.index) +
+      `{${name}}` +
+      source.slice(closeBrace + 1)
+    jsxHook.lastIndex = 0
+  }
+  return source
+}
+
+// A component that reads its children, for an item's text or for which parts the
+// markup places, gets them as elements and strings, as in React, through
+// Octane's \`descriptorChildren\`. Otherwise they arrive as a compiled render body.
+const inspectsChildren = /\b(hasChild|learnLabels|textToMark)\(/
+const descriptorComponents = (source) => {
+  let changed = false
+  for (let at = 0; (at = source.indexOf("\nfunction ", at)) !== -1; ) {
+    const start = at + 1
+    const name = source.slice(start + 9).match(/^[A-Z]\w*/)?.[0]
+    // The parameter list may hold braces, so the body is the brace after \`) {\`.
+    const open = source.slice(start).search(/\)(?::[^{]*)?\s*\{\n/) + start
+    const brace = source.indexOf("{", open)
+    const { end } = closing(source, brace + 1)
+    at = end
+    if (!name || !inspectsChildren.test(source.slice(brace, end))) continue
+    source =
+      source.slice(0, start) +
+      `const ${name} = descriptorChildren(` +
+      source.slice(start, end + 1) +
+      ")" +
+      source.slice(end + 1)
+    changed = true
+  }
+  return changed ? `import { descriptorChildren } from "octane"\n` + source : source
 }
 
 // The adapter.
@@ -77,7 +188,7 @@ mkdirSync(to, { recursive: true })
 for (const file of readdirSync(from)) {
   let source = rewrite(readFileSync(join(from, file), "utf8"))
   source = OVERRIDES[file]?.(source) ?? source
-  writeFileSync(join(to, file), pragma + source)
+  writeFileSync(join(to, file), pragma + descriptorComponents(hoistJsxHooks(reactDeps(stateFunctions(source)))))
 }
 
 // The package manifest: React's exports, Octane's peer.
@@ -91,13 +202,22 @@ manifest.devDependencies = { "@ui-sdk/core": "workspace:*", octane: "0.18.0" }
 delete manifest.scripts
 writeFileSync(join(root, "packages/octane/package.json"), JSON.stringify(manifest, null, 2) + "\n")
 
+// A fixture's text field listens to onInput, Octane's per-keystroke event.
+// Checkboxes keep onChange, which fires per toggle in both.
+const textInputs = (source) =>
+  source.replace(/onChange=\{([^}]*)\}/g, (all, handler) => (handler.includes("checked") ? all : `onInput={${handler}}`))
+
+// Octane has no Profiler. Specs read its commit count on React only.
+const fixtureOnly = (source) =>
+  textInputs(source).replace(/<React\.Profiler\b[\s\S]*?\}>/g, "<>").replaceAll("</React.Profiler>", "</>")
+
 // The fixtures: each React fixture's Octane twin, unless one is written by hand (`octane.manual.tsx`).
 const fixtures = join(root, "apps/playground/src/fixtures")
 let count = 0
 for (const name of readdirSync(fixtures)) {
   const react = join(fixtures, name, "react.tsx")
   if (!existsSync(react) || existsSync(join(fixtures, name, "octane.manual.tsx"))) continue
-  writeFileSync(join(fixtures, name, "octane.tsx"), pragma + rewrite(readFileSync(react, "utf8")))
+  writeFileSync(join(fixtures, name, "octane.tsx"), pragma + reactDeps(fixtureOnly(rewrite(readFileSync(react, "utf8")))))
   count += 1
 }
 console.log(`octane-port: ${readdirSync(to).length} adapter files, ${count} fixtures`)

@@ -109,9 +109,7 @@ function CheckboxGroup<T extends string = string>({
     controller: controller as CheckboxGroupController | undefined,
     debug,
   })
-  return (
-    <CheckboxGroupContext value={group}>
-      {usePart(
+  const jsxHook0 = usePart(
         group,
         "group",
         {},
@@ -120,7 +118,10 @@ function CheckboxGroup<T extends string = string>({
           render: controlRender(field, "div", render, <GroupInput />),
         },
         "div"
-      )}
+      )
+  return (
+    <CheckboxGroupContext value={group}>
+      {jsxHook0}
     </CheckboxGroupContext>
   )
 }

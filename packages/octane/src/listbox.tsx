@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   listbox as listboxPrimitive,
   type ListData,
@@ -103,7 +108,7 @@ function Listbox<T = string, Multiple extends boolean | undefined = false>({
   } as ListboxOptions<any, any>)
   // Without children, a data listbox renders its items.
   const content = (state: ListboxState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : (children ?? (items && <ListboxItems items={state.items} />))
   // The props left once the options are taken out, which TypeScript can't see for every `Multiple`.
@@ -113,9 +118,10 @@ function Listbox<T = string, Multiple extends boolean | undefined = false>({
     children: content,
     render: controlRender(field, "div", render),
   }
+  const jsxHook0 = usePart(listbox, "root", {}, root)
   return (
     <>
-      {usePart(listbox, "root", {}, root)}
+      {jsxHook0}
       <FormInputs handle={listbox} />
     </>
   )

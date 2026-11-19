@@ -112,7 +112,7 @@ const eventProps: Record<string, string> = /* @__PURE__ */ Object.assign(
     dblclick: "onDoubleClick",
     focusin: "onFocus",
     focusout: "onBlur",
-    input: "onChange",
+    input: "onInput",
     submit: "onSubmit",
   }
 )
@@ -220,7 +220,7 @@ function usePrimitive<P extends Primitive>(
   // instance has what the preview showed.
   React.useLayoutEffect(() => {
     handOver(instance, next, preview, outers)
-  })
+  }, null)
 
   // Hidden or gone, the instance lets go of what it holds outside itself,
   // like its controller, and keeps its state for <Activity> showing it again.
@@ -265,7 +265,7 @@ function usePrimitive<P extends Primitive>(
 
   // Once every part in the commit bound, StrictMode's rebinds too: their store
   // writes land before a synchronous `act()` returns, so it leaves none for after.
-  React.useEffect(() => runBindWrites())
+  React.useEffect(() => runBindWrites(), null)
 
   // One object for the instance's life, so context consumers never re-render
   // because of it. Parts subscribe to what they render through usePart.
@@ -756,7 +756,7 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
     if (changed) {
       rechecks.get(instance)?.forEach((recheck) => recheck())
     }
-  })
+  }, null)
 
   // A new key is a new part, and a new value the part selects on needs a new subscription.
   const selected = selectedKeys(part, props)

@@ -1,4 +1,10 @@
 /** @jsxImportSource octane */
+import { descriptorChildren } from "octane"
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   command as commandPrimitive,
   type CommandData,
@@ -57,7 +63,7 @@ type CommandProps = CommandOptions &
  * A search field over an always-open list of commands. Renders a `div` around them.
  * @stable
  */
-function Command({
+const Command = descriptorChildren(function Command({
   value,
   defaultValue,
   onValueChange,
@@ -115,7 +121,7 @@ function Command({
   )
   const own = placed || found
   const content = (state: CommandState) =>
-    typeof children === "function" ? (
+    isStateFunction(children) ? (
       <Placed value={place}>{children(state)}</Placed>
     ) : (
       <>
@@ -124,7 +130,7 @@ function Command({
       </>
     )
   return usePart(command, "root", {}, { ...props, children: content })
-}
+})
 
 /**
  * The search field. It keeps focus while arrow keys move the highlight. Name it with `aria-label`.
@@ -143,7 +149,7 @@ function CommandList({
   usePlaceContent()
   const command = useCommand()
   const content = (state: CommandListState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : (children ??
         (command.state.items ? <CommandItems items={state.items} /> : null))
@@ -195,7 +201,7 @@ function CommandItem({
  * The command's text, with the part the search matched in `<mark>`. Without string content, it shows the command's label.
  * @stable
  */
-function CommandItemText({
+const CommandItemText = descriptorChildren(function CommandItemText({
   children,
   ...props
 }: PartProps<"span", CommandItemTextState>) {
@@ -206,7 +212,7 @@ function CommandItemText({
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
   const content =
-    typeof children === "function"
+    isStateFunction(children)
       ? children
       : (state: CommandItemTextState) => markSegments(state.segments)
   return usePart(
@@ -216,7 +222,7 @@ function CommandItemText({
     { ...props, children: content },
     "span"
   )
-}
+})
 
 /**
  * An icon inside a command. Screen readers, typeahead and filtering skip it, and `mirror` flips it
@@ -291,7 +297,7 @@ function CommandEmpty({
   ...props
 }: PartProps<"div", CommandEmptyState>) {
   const content = (state: CommandEmptyState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : state.empty
         ? children

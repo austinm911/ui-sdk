@@ -1,4 +1,10 @@
 /** @jsxImportSource octane */
+import { descriptorChildren } from "octane"
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   combobox as comboboxPrimitive,
   type ComboboxChipProps,
@@ -103,7 +109,7 @@ type ComboboxProps<
  * `multiple` makes the value a list.
  * @stable
  */
-function Combobox<T = string, Multiple extends boolean | undefined = false>({
+const Combobox = descriptorChildren(function Combobox<T = string, Multiple extends boolean | undefined = false>({
   children,
   container,
   ...options
@@ -135,7 +141,7 @@ function Combobox<T = string, Multiple extends boolean | undefined = false>({
       </ContainerContext>
     </HandleScope>
   )
-}
+})
 
 /**
  * A visible label for the input.
@@ -207,7 +213,7 @@ function ComboboxContent({
   const body = (state: ComboboxContentState) => (
     <>
       {sheetHeader(combobox, setHeader)}
-      {typeof children === "function"
+      {isStateFunction(children)
         ? children(state)
         : (children ??
           (state.items && combobox.state.items && <ComboboxList />))}
@@ -250,7 +256,7 @@ const ComboboxItem = parts.Item as <T = string>(
  * The item's text, with the part the input's text matched in `<mark>`. Without string content, it shows the item's label.
  * @stable
  */
-function ComboboxItemText({
+const ComboboxItemText = descriptorChildren(function ComboboxItemText({
   children,
   ...props
 }: PartProps<"span", ComboboxItemTextState>) {
@@ -261,7 +267,7 @@ function ComboboxItemText({
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
   const content =
-    typeof children === "function"
+    isStateFunction(children)
       ? children
       : (state: ComboboxItemTextState) => markSegments(state.segments)
   return usePart(
@@ -271,7 +277,7 @@ function ComboboxItemText({
     { ...props, children: content },
     "span"
   )
-}
+})
 
 /**
  * An option that selects every item that matches, with `multiple`: in its group inside a `ComboboxGroup`, or in the whole list.
@@ -388,7 +394,7 @@ function ComboboxEmpty({
   ...props
 }: PartProps<"div", ComboboxEmptyState>) {
   const content = (state: ComboboxEmptyState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : state.empty
         ? children
@@ -427,7 +433,7 @@ function ComboboxValue({
   // Its state, without an element.
   const value = (_props: unknown, state: ComboboxValueState) => (
     <>
-      {typeof children === "function"
+      {isStateFunction(children)
         ? children(state)
         : (children ?? state.label)}
     </>
@@ -478,9 +484,10 @@ function ComboboxChip<T = string>({
   combobox.instance.use(comboboxChips)
   const part = { id: combobox.api.internal.keyOf(value), value }
   const chip = React.useMemo(() => ({ value }), [value])
+  const jsxHook0 = usePart(combobox, "chip", part, { ...props, children })
   return (
     <ChipContext value={chip}>
-      {usePart(combobox, "chip", part, { ...props, children })}
+      {jsxHook0}
     </ChipContext>
   )
 }

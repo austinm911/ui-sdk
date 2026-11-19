@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 // What Date Input and Time Input render alike: the root with its segments and
 // hidden input, and a segment, which is an input or the text between inputs.
 import type {
@@ -74,7 +79,7 @@ function useSegmentedRoot(
         ? state.segments.map((segment) => (
             <Segment key={segment.key} segment={segment} />
           ))
-        : typeof children === "function"
+        : isStateFunction(children)
           ? children(state)
           : children}
       <HiddenInput primitive={primitive} />

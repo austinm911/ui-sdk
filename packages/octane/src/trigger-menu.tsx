@@ -1,4 +1,10 @@
 /** @jsxImportSource octane */
+import { descriptorChildren } from "octane"
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   triggerMenu as triggerMenuPrimitive,
   type TriggerMenuContentProps,
@@ -61,7 +67,7 @@ type TriggerMenuProps<T = string> = TriggerMenuOptions<T> & {
  * it uses that editor; otherwise render a TriggerMenuInput, or pass `editor`.
  * @stable
  */
-function TriggerMenu<T = string>({
+const TriggerMenu = descriptorChildren(function TriggerMenu<T = string>({
   children,
   container,
   editor,
@@ -86,7 +92,7 @@ function TriggerMenu<T = string>({
       </ContainerContext>
     </HandleScope>
   )
-}
+})
 
 /**
  * The text field the menu suggests into: a `<textarea>`, or an `<input>` through `render`.
@@ -189,7 +195,7 @@ function TriggerMenuEmpty({
   ...props
 }: PartProps<"div", TriggerMenuEmptyState>) {
   const content = (state: TriggerMenuEmptyState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : state.empty
         ? children

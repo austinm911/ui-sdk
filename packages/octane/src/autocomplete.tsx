@@ -1,4 +1,10 @@
 /** @jsxImportSource octane */
+import { descriptorChildren } from "octane"
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   autocomplete as autocompletePrimitive,
   type AutocompleteContentProps,
@@ -70,7 +76,7 @@ type AutocompleteProps = AutocompleteOptions & {
  * A text field that suggests as you type. The text is the value. Renders no element of its own.
  * @stable
  */
-function Autocomplete({ children, container, ...options }: AutocompleteProps) {
+const Autocomplete = descriptorChildren(function Autocomplete({ children, container, ...options }: AutocompleteProps) {
   const field = useFieldControl()
   const autocomplete = usePrimitive(autocompletePrimitive, {
     ...options,
@@ -96,7 +102,7 @@ function Autocomplete({ children, container, ...options }: AutocompleteProps) {
       </ContainerContext>
     </HandleScope>
   )
-}
+})
 
 /**
  * A visible label for the field.
@@ -174,7 +180,7 @@ function AutocompleteContent({
   const body = (state: AutocompleteContentState) => (
     <>
       {sheetHeader(autocomplete, setHeader)}
-      {typeof children === "function"
+      {isStateFunction(children)
         ? children(state)
         : (children ??
           (state.items && autocomplete.state.items && <AutocompleteList />))}
@@ -217,7 +223,7 @@ const AutocompleteItem = parts.Item as (
  * The suggestion's text, with the part the field's text matched in `<mark>`. Without string content, it shows the suggestion's label.
  * @stable
  */
-function AutocompleteItemText({
+const AutocompleteItemText = descriptorChildren(function AutocompleteItemText({
   children,
   ...props
 }: PartProps<"span", AutocompleteItemTextState>) {
@@ -232,7 +238,7 @@ function AutocompleteItemText({
     text: textToMark(children, (item.label ?? item.value) as string),
   }
   const content =
-    typeof children === "function"
+    isStateFunction(children)
       ? children
       : (state: AutocompleteItemTextState) => markSegments(state.segments)
   return usePart(
@@ -242,7 +248,7 @@ function AutocompleteItemText({
     { ...props, children: content },
     "span"
   )
-}
+})
 
 /**
  * An icon inside a suggestion. Screen readers, typeahead and filtering skip it, and `mirror` flips
@@ -278,7 +284,7 @@ function AutocompleteEmpty({
   ...props
 }: PartProps<"div", AutocompleteEmptyState>) {
   const content = (state: AutocompleteEmptyState) =>
-    typeof children === "function"
+    isStateFunction(children)
       ? children(state)
       : state.empty
         ? children

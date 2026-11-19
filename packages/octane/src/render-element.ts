@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 // Renders an element with no primitive behind it, and merges props and refs.
 // Nothing here uses hooks or context, so the build ships this module without
 // "use client" and a Server Component can call `renderElement` itself.
@@ -164,7 +169,7 @@ function renderElement<State>(
   if (typeof props.style === "function") {
     props = { ...props, style: props.style(state) }
   }
-  if (typeof props.children === "function") {
+  if (isStateFunction(props.children)) {
     props = { ...props, children: props.children(state) }
   }
   if (typeof render === "function") {

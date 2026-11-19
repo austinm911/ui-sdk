@@ -92,15 +92,16 @@ function ToggleGroup<T extends string = string>({
     toolbar,
   })
   // The state holds only values of type `T`, which the primitive types as strings.
-  return (
-    <ToggleGroupContext value={group}>
-      {usePart(
+  const jsxHook0 = usePart(
         group,
         "group",
         {},
         props as PartProps<"div", ToggleGroupState>,
         "div"
-      )}
+      )
+  return (
+    <ToggleGroupContext value={group}>
+      {jsxHook0}
     </ToggleGroupContext>
   )
 }

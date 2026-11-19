@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   colorPicker,
   type ColorPickerChannelInputProps,
@@ -94,7 +99,7 @@ function ColorPicker({
     ...props,
     children: (state: ColorPickerState) => (
       <>
-        {typeof children === "function" ? children(state) : children}
+        {isStateFunction(children) ? children(state) : children}
         <HiddenInput />
       </>
     ),

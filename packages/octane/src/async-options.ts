@@ -21,7 +21,7 @@ function useAsyncOptions<Item>(
   const latest = React.useRef(load)
   React.useLayoutEffect(() => {
     latest.current = load
-  })
+  }, null)
   // Nothing loads while rendering, which React may repeat or throw away, or
   // on the server. An `immediate` load starts once the component mounts.
   const [{ helper, immediate, initial }] = React.useState(() => {

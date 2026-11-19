@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   otpInput,
   type OTPInputOptions,
@@ -45,7 +50,7 @@ function withInput<State>(
 ) {
   return (state: State) => (
     <>
-      {typeof children === "function" ? children(state) : children}
+      {isStateFunction(children) ? children(state) : children}
       {input}
     </>
   )

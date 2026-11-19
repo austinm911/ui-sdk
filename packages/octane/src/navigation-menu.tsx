@@ -138,9 +138,10 @@ function NavigationMenuItem({
   // Its value reaches a menu nested in it, and its content.
   const generated = React.useId()
   const item = { value: value ?? generated }
+  const jsxHook0 = usePart(navigationMenu, "item", item, props, "li")
   return (
     <ItemContext value={item.value}>
-      {usePart(navigationMenu, "item", item, props, "li")}
+      {jsxHook0}
     </ItemContext>
   )
 }

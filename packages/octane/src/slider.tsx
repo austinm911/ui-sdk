@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   slider as sliderPrimitive,
   type SliderOptions,
@@ -56,7 +61,7 @@ function withAfter<State>(
 ) {
   return (state: State) => (
     <>
-      {typeof children === "function" ? children(state) : children}
+      {isStateFunction(children) ? children(state) : children}
       {after}
     </>
   )
@@ -126,9 +131,10 @@ function Slider<Value extends number | number[] = number | number[]>({
     children: withAfter(children, <HiddenInput />),
     render: controlRender(range ? field : null, "div", render),
   }
+  const jsxHook0 = usePart(slider, "root", {}, root)
   return (
     <SliderContext value={context}>
-      {usePart(slider, "root", {}, root)}
+      {jsxHook0}
     </SliderContext>
   )
 }

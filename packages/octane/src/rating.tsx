@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   rating,
   ratingItemValues,
@@ -78,10 +83,12 @@ function Rating({
 }
 
 function RatingRadio({ value }: { value: string }) {
+  const jsxHook0 = usePart(rating, "radio", { value }, {}, "button")
+  const jsxHook1 = usePart(rating, "input", { value }, {}, "input")
   return (
     <>
-      {usePart(rating, "radio", { value }, {}, "button")}
-      {usePart(rating, "input", { value }, {}, "input")}
+      {jsxHook0}
+      {jsxHook1}
     </>
   )
 }
@@ -110,7 +117,7 @@ function RatingItem({
       ...props,
       children: (state: RatingItemState) => (
         <>
-          {typeof children === "function" ? children(state) : children}
+          {isStateFunction(children) ? children(state) : children}
           {radios}
         </>
       ),

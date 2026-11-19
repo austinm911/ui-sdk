@@ -31,7 +31,7 @@ function Fixture() {
   return (
     <div className="fixture">
       <button>Before</button>
-      <React.Profiler id="menu" onRender={() => counter.commits++}>
+      <>
         <Menu onAction={setAction} controller={controller} {...menuOptions()}>
           <MenuTrigger>File</MenuTrigger>
           <MenuContent className="popup">
@@ -92,7 +92,7 @@ function Fixture() {
             </MenuItem>
           </MenuContent>
         </Menu>
-      </React.Profiler>
+      </>
       <button>After</button>
       <output role="status" aria-label="Last action">
         {action}

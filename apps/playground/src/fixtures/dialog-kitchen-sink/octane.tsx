@@ -64,7 +64,7 @@ function Body({ variant, onDirty }: { variant: Variant; onDirty: () => void }) {
   return (
     <label className="mb-4 flex flex-col gap-1">
       Name
-      <input className={classes.input} defaultValue="Ada" onChange={onDirty} />
+      <input className={classes.input} defaultValue="Ada" onInput={onDirty} />
     </label>
   )
 }

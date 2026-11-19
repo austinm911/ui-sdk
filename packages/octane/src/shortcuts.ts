@@ -33,7 +33,7 @@ function useShortcut(
   // After the commit, so a render React discards never runs.
   React.useLayoutEffect(() => {
     latest.current = { handler, options }
-  })
+  }, null)
   const { scope, allowInInput, repeat, description } = options
   // Only a shortcut with a condition passes one, so the development warning
   // for the same keys registered twice still sees the rest.

@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   toolbar,
   type ToolbarGroupProps,
@@ -44,9 +49,10 @@ function Toolbar({
     debug,
   })
   // In its own context too, so a toggle can join a toolbar without bundling it.
+  const jsxHook0 = usePart(handle, "root", {}, props)
   return (
     <ToolbarContext value={handle}>
-      {usePart(handle, "root", {}, props)}
+      {jsxHook0}
     </ToolbarContext>
   )
 }
@@ -81,7 +87,7 @@ function ToolbarGroup({
   // Toggles inside read whether the group is disabled from context.
   const content = (state: ToolbarGroupState) => (
     <ToolbarGroupContext value={state.disabled}>
-      {typeof children === "function" ? children(state) : children}
+      {isStateFunction(children) ? children(state) : children}
     </ToolbarGroupContext>
   )
   return usePart(

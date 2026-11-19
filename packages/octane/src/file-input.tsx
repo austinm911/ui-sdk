@@ -1,4 +1,9 @@
 /** @jsxImportSource octane */
+import { isChildrenBlock } from "octane"
+
+function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+  return typeof value === "function" && !isChildrenBlock(value)
+}
 import {
   fileInput,
   type FileInputItemProps,
@@ -99,7 +104,7 @@ function FileInput({
   useControllerEntry(controller, handle)
   const content = (current: FileInputState) => (
     <>
-      {typeof children === "function" ? children(current) : children}
+      {isStateFunction(children) ? children(current) : children}
       <HiddenInput />
     </>
   )

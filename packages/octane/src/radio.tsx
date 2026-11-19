@@ -66,14 +66,15 @@ function RadioGroup<T extends string = string>({
     controller: controller as RadioGroupController | undefined,
     debug,
   })
-  return (
-    <GroupFieldContext value={groupField}>
-      {usePart(
+  const jsxHook0 = usePart(
         group,
         "group",
         {},
         { ...props, render: controlRender(field, "div", render) }
-      )}
+      )
+  return (
+    <GroupFieldContext value={groupField}>
+      {jsxHook0}
     </GroupFieldContext>
   )
 }
