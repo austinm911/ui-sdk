@@ -26,7 +26,7 @@ function hasFixture(fixture: string, framework: string) {
  * the composition frameworks, so they're listed too, except for those.
  */
 function specsThatSkip(framework: string) {
-  const composition = ["react", "vue", "web"].includes(framework)
+  const composition = ["react", "vue", "web", "octane"].includes(framework)
   return specFixtures().flatMap(({ file, fixtures }) => {
     if (file.endsWith(".kitchen-sink.spec.ts")) {
       return composition ? [] : [file]

@@ -8,7 +8,7 @@ type Native<Tag extends "input" | "textarea", State> = Omit<
   "value" | "defaultValue" | "onSelect"
 >
 
-// React warns about a `value` without `onChange`. `onValueChange` is the change handler here.
+// Octane warns about a `value` without `onInput`. `onValueChange` is the change handler here.
 const ignore = () => {}
 
 // The native props a text field's state follows, and its change handler.
@@ -16,7 +16,7 @@ type TextProps = {
   disabled?: boolean
   readOnly?: boolean
   required?: boolean
-  onChange?: unknown
+  onInput?: unknown
 }
 
 // The states a text field's attributes follow, from its own props and its field's.
@@ -44,7 +44,7 @@ function elementProps<Props extends TextProps>(
     ...props,
     value,
     defaultValue,
-    onChange: props.onChange ?? (value === undefined ? undefined : ignore),
+    onInput: props.onInput ?? (value === undefined ? undefined : ignore),
   }
 }
 

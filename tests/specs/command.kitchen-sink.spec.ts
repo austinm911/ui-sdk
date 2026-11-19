@@ -4,7 +4,7 @@ import { expect, test } from "../fixtures"
 // only proves every list renders, highlights and filters without errors.
 test("every kitchen sink variant responds", async ({ page, framework }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

@@ -7,7 +7,7 @@ test("every text field kitchen sink variant works", async ({
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)
@@ -51,7 +51,7 @@ test("a field set's legend rendered as another element names the group", async (
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   await page.goto(`/?fixture=form-kitchen-sink&framework=${framework}`)

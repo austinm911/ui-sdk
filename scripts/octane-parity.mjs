@@ -5,7 +5,8 @@
 //
 // A test counts for parity when React passes it. Octane is at parity when it
 // passes every one of those, exports every entry React exports, and has a
-// fixture for every React fixture.
+// fixture for every React fixture. A spec that runs once, on React, because it
+// doesn't depend on the framework ("Framework independent.") doesn't count.
 import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { join } from "node:path"
 
@@ -21,6 +22,12 @@ const walk = (suite, titles) => {
       const key = `${spec.file} › ${[...titles.slice(1), spec.title].join(" › ")}`
       const entry = outcomes.get(key) ?? { file: spec.file }
       entry[test.projectName] = test.status
+      if (
+        test.projectName === "octane" &&
+        test.annotations?.some((note) => note.type === "skip" && note.description === "Framework independent.")
+      ) {
+        entry.independent = true
+      }
       outcomes.set(key, entry)
     }
   }
@@ -32,7 +39,7 @@ const files = new Map()
 const gaps = []
 for (const [key, entry] of outcomes) {
   const file = files.get(entry.file) ?? { react: 0, octane: 0 }
-  if (passes(entry.react)) {
+  if (passes(entry.react) && !entry.independent) {
     file.react += 1
     if (passes(entry.octane)) file.octane += 1
     else gaps.push({ key, octane: entry.octane ?? "not run" })

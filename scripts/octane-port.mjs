@@ -67,7 +67,22 @@ const replaceOnce = (source, before, after) => {
 // Octane has no synthetic onChange: text controls fire onInput per keystroke.
 const inputEvent = (source) => replaceOnce(source, 'input: "onChange",', 'input: "onInput",')
 
+// React and Octane both warn about a controlled value without a change handler,
+// so the adapter adds a no-op one. Octane's per-keystroke handler is onInput, and
+// its onChange is the native commit event, which it warns about on text fields.
+const placeholderInput = (source) =>
+  replaceOnce(
+    replaceOnce(
+      source,
+      "onChange: props.onChange ?? (value === undefined ? undefined : ignore),",
+      "onInput: props.onInput ?? (value === undefined ? undefined : ignore),",
+    ),
+    "  onChange?: unknown\n",
+    "  onInput?: unknown\n",
+  ).replace("React warns about a \`value\` without \`onChange\`", "Octane warns about a \`value\` without \`onInput\`")
+
 const OVERRIDES = {
+  "text-control.ts": placeholderInput,
   "use-primitive.tsx": (source) => inputEvent(oneIdPerPart(nativeEvents(source))),
   "button.tsx": nativeEvents,
 }
