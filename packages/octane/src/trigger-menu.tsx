@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -195,11 +197,7 @@ function TriggerMenuEmpty({
   ...props
 }: PartProps<"div", TriggerMenuEmptyState>) {
   const content = (state: TriggerMenuEmptyState) =>
-    isStateFunction(children)
-      ? children(state)
-      : state.empty
-        ? children
-        : null
+    isStateFunction(children) ? children(state) : state.empty ? children : null
   return usePart(
     triggerMenuPrimitive,
     "empty",

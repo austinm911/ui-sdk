@@ -314,7 +314,7 @@ function VariantCombobox({
           <input
             type="checkbox"
             checked={open}
-            onChange={(event) => setOpen(event.target.checked)}
+            onChange={(event) => setOpen(event.currentTarget.checked)}
           />
           open
         </label>

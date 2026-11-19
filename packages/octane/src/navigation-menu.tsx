@@ -113,9 +113,7 @@ function NavigationMenu<T extends string = string>({
   )
   return (
     <ItemContext value={null}>
-      <ContainerContext value={container}>
-        {element}
-      </ContainerContext>
+      <ContainerContext value={container}>{element}</ContainerContext>
     </ItemContext>
   )
 }
@@ -139,11 +137,7 @@ function NavigationMenuItem({
   const generated = React.useId()
   const item = { value: value ?? generated }
   const jsxHook0 = usePart(navigationMenu, "item", item, props, "li")
-  return (
-    <ItemContext value={item.value}>
-      {jsxHook0}
-    </ItemContext>
-  )
+  return <ItemContext value={item.value}>{jsxHook0}</ItemContext>
 }
 
 /**

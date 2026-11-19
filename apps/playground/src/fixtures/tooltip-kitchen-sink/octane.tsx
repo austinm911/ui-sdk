@@ -29,7 +29,8 @@ function Content({
   variant: Variant
   env: Env
   shortcut?: boolean
-  children: React.ReactNode | ((state: TooltipContentState) => React.ReactNode)
+  children:
+    {} | null | undefined | ((state: TooltipContentState) => React.ReactNode)
 }) {
   return (
     <TooltipContent
@@ -227,7 +228,7 @@ function VariantTooltip({ variant, env }: { variant: Variant; env: Env }) {
           <input
             type="checkbox"
             checked={open}
-            onChange={(event) => setOpen(event.target.checked)}
+            onChange={(event) => setOpen(event.currentTarget.checked)}
           />
           open
         </label>

@@ -47,7 +47,9 @@ const popup = params.get("popup") ?? "dialog"
 
 // The popup's title, a field to type in, a way to leave the page, and Close.
 // Octane's compiler mishandles a static <Activity> here.
-const Hideable = ({ Activity: React.Activity } as Record<string, typeof React.Activity>).Activity
+const Hideable = (
+  { Activity: React.Activity } as Record<string, typeof React.Activity>
+).Activity
 
 function Fields({
   Title,

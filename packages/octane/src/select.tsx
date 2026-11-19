@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -101,11 +103,10 @@ type SelectProps<
  * `multiple` makes the value a list.
  * @stable
  */
-const Select = descriptorChildren(function Select<T = string, Multiple extends boolean | undefined = false>({
-  children,
-  container,
-  ...options
-}: SelectProps<T, Multiple>) {
+const Select = descriptorChildren(function Select<
+  T = string,
+  Multiple extends boolean | undefined = false,
+>({ children, container, ...options }: SelectProps<T, Multiple>) {
   const field = useFieldControl()
   const select = usePrimitive(selectPrimitive, {
     ...(options as SelectOptions<any, any>),
@@ -351,11 +352,7 @@ function SelectEmpty({
   ...props
 }: PartProps<"div", SelectEmptyState>) {
   const content = (state: SelectEmptyState) =>
-    isStateFunction(children)
-      ? children(state)
-      : state.empty
-        ? children
-        : null
+    isStateFunction(children) ? children(state) : state.empty ? children : null
   return usePart(selectPrimitive, "empty", {}, { ...props, children: content })
 }
 
@@ -387,10 +384,9 @@ const SelectItemText = descriptorChildren(function SelectItemText({
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
-  const content =
-    isStateFunction(children)
-      ? children
-      : (state: SelectItemTextState) => markSegments(state.segments)
+  const content = isStateFunction(children)
+    ? children
+    : (state: SelectItemTextState) => markSegments(state.segments)
   return usePart(
     selectPrimitive,
     "item-text",

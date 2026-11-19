@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -119,11 +121,7 @@ function Tree<Mode extends TreeMode = "single">({
   const data = readIn(tree, () => tree.api.internal.items())
   const content = children ?? (data && <TreeItems items={data} />)
   const jsxHook0 = usePart(tree, "root", {}, { ...props, children: content })
-  return (
-    <ItemContext value={null}>
-      {jsxHook0}
-    </ItemContext>
-  )
+  return <ItemContext value={null}>{jsxHook0}</ItemContext>
 }
 
 /**
@@ -155,11 +153,7 @@ const TreeItem = descriptorChildren(function TreeItem({
     label,
   }
   const jsxHook1 = usePart(treePrimitive, "item", item, { ...props, children })
-  return (
-    <ItemContext value={value}>
-      {jsxHook1}
-    </ItemContext>
-  )
+  return <ItemContext value={value}>{jsxHook1}</ItemContext>
 })
 
 /**

@@ -31,11 +31,7 @@ function Menubar({
   })
   // In its own context, so a menu can join a menubar without bundling it.
   const jsxHook0 = usePart(menubar, "root", {}, props)
-  return (
-    <MenubarContext value={menubar}>
-      {jsxHook0}
-    </MenubarContext>
-  )
+  return <MenubarContext value={menubar}>{jsxHook0}</MenubarContext>
 }
 
 export { createMenubarController } from "@ui-sdk/core/menubar"

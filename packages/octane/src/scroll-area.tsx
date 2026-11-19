@@ -50,16 +50,12 @@ function ScrollAreaScrollbar({
   ...props
 }: ScrollAreaScrollbarProps & PartProps<"div", ScrollAreaScrollbarState>) {
   const jsxHook0 = usePart(
-        scrollArea,
-        "scrollbar",
-        { id: orientation, orientation },
-        props
-      )
-  return (
-    <OrientationContext value={orientation}>
-      {jsxHook0}
-    </OrientationContext>
+    scrollArea,
+    "scrollbar",
+    { id: orientation, orientation },
+    props
   )
+  return <OrientationContext value={orientation}>{jsxHook0}</OrientationContext>
 }
 
 /**

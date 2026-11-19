@@ -1,7 +1,9 @@
 /** @jsxImportSource octane */
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -197,9 +199,7 @@ function DatePicker({
   return (
     <DatePickerContext value={context}>
       <CalendarContext value={picker as unknown as CalendarHandle}>
-        <ContainerContext value={container}>
-          {jsxHook0}
-        </ContainerContext>
+        <ContainerContext value={container}>{jsxHook0}</ContainerContext>
       </CalendarContext>
     </DatePickerContext>
   )

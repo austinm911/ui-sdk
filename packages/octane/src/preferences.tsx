@@ -100,7 +100,10 @@ function Preferences({
       {...props}
       // `mergeRefs` takes refs to any element, and both of these are to this div.
       ref={mergeRefs(element, ref ?? null) as React.Ref<HTMLDivElement>}
-      style={{ display: "contents", ...style }}
+      style={{
+        display: "contents",
+        ...(typeof style === "object" ? style : {}),
+      }}
       suppressHydrationWarning
     >
       {fromServer ? (

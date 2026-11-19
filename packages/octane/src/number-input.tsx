@@ -1,7 +1,9 @@
 /** @jsxImportSource octane */
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -117,12 +119,13 @@ function NumberInput({
       <HiddenInput />
     </>
   )
-  const jsxHook0 = usePart(numberInput, "root", {}, { ...props, children: content })
-  return (
-    <NumberInputContext value={context}>
-      {jsxHook0}
-    </NumberInputContext>
+  const jsxHook0 = usePart(
+    numberInput,
+    "root",
+    {},
+    { ...props, children: content }
   )
+  return <NumberInputContext value={context}>{jsxHook0}</NumberInputContext>
 }
 
 // The hidden input that submits the number as is.

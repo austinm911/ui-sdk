@@ -379,6 +379,9 @@
       "./package.json": "./package.json"
     }
   },
+  "scripts": {
+    "typecheck": "node ../../scripts/tsgo.mjs --noEmit"
+  },
   "peerDependencies": {
     "@ui-sdk/core": "workspace:^",
     "octane": ">=0.18.0"

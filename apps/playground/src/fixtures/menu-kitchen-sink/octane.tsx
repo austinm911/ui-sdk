@@ -161,7 +161,7 @@ function VariantMenu({ variant, env }: { variant: Variant; env: Env }) {
           <input
             type="checkbox"
             checked={open}
-            onChange={(event) => setOpen(event.target.checked)}
+            onChange={(event) => setOpen(event.currentTarget.checked)}
           />
           open
         </label>

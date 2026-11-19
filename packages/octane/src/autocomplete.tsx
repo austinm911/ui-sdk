@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -76,7 +78,11 @@ type AutocompleteProps = AutocompleteOptions & {
  * A text field that suggests as you type. The text is the value. Renders no element of its own.
  * @stable
  */
-const Autocomplete = descriptorChildren(function Autocomplete({ children, container, ...options }: AutocompleteProps) {
+const Autocomplete = descriptorChildren(function Autocomplete({
+  children,
+  container,
+  ...options
+}: AutocompleteProps) {
   const field = useFieldControl()
   const autocomplete = usePrimitive(autocompletePrimitive, {
     ...options,
@@ -237,10 +243,9 @@ const AutocompleteItemText = descriptorChildren(function AutocompleteItemText({
     id: item.value as string,
     text: textToMark(children, (item.label ?? item.value) as string),
   }
-  const content =
-    isStateFunction(children)
-      ? children
-      : (state: AutocompleteItemTextState) => markSegments(state.segments)
+  const content = isStateFunction(children)
+    ? children
+    : (state: AutocompleteItemTextState) => markSegments(state.segments)
   return usePart(
     autocompletePrimitive,
     "item-text",
@@ -284,11 +289,7 @@ function AutocompleteEmpty({
   ...props
 }: PartProps<"div", AutocompleteEmptyState>) {
   const content = (state: AutocompleteEmptyState) =>
-    isStateFunction(children)
-      ? children(state)
-      : state.empty
-        ? children
-        : null
+    isStateFunction(children) ? children(state) : state.empty ? children : null
   return usePart(
     autocompletePrimitive,
     "empty",

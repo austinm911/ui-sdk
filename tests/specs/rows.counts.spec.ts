@@ -72,7 +72,8 @@ test.describe("work to mount many closed popups", () => {
             0
           )
         })
-        const base = budget.elements[framework as "react" | "vue" | "web" | "octane"]
+        const base =
+          budget.elements[framework as "react" | "vue" | "web" | "octane"]
         expect(
           elements / n,
           "A row has more elements than its parts and options. See tests/perf/README.md#rows-mount."

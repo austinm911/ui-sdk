@@ -1,5 +1,9 @@
 /** @jsxImportSource octane */
-import { Toolbar, ToolbarButton, ToolbarSeparator } from "@ui-sdk/octane/toolbar"
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarSeparator,
+} from "@ui-sdk/octane/toolbar"
 import * as React from "octane"
 import { createRoot } from "octane"
 

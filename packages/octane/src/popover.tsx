@@ -58,9 +58,7 @@ function Popover({ children, container, ...options }: PopoverProps) {
   useControllerEntry(options.controller, handle)
   return (
     <HandleScope handle={handle}>
-      <ContainerContext value={container}>
-        {children}
-      </ContainerContext>
+      <ContainerContext value={container}>{children}</ContainerContext>
     </HandleScope>
   )
 }

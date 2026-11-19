@@ -1,7 +1,9 @@
 /** @jsxImportSource octane */
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -50,11 +52,7 @@ function Toolbar({
   })
   // In its own context too, so a toggle can join a toolbar without bundling it.
   const jsxHook0 = usePart(handle, "root", {}, props)
-  return (
-    <ToolbarContext value={handle}>
-      {jsxHook0}
-    </ToolbarContext>
-  )
+  return <ToolbarContext value={handle}>{jsxHook0}</ToolbarContext>
 }
 
 /**

@@ -18,6 +18,10 @@ const commentLengthSkips = {
     "Its header documents everything it checks in the packed packages.",
 }
 
+// Generated from the React adapter by scripts/octane-port.mjs, so their comments are React's.
+const generatedFromReact =
+  /^(packages\/octane\/|apps\/playground\/src\/fixtures\/[^/]+\/octane\.tsx$)/
+
 const root = path.resolve(import.meta.dirname, "..")
 const git = (...args) =>
   execFileSync("git", args, {
@@ -44,7 +48,7 @@ if (violations.length) {
 
 function checkCommentLength() {
   for (const [file, changed] of changedLines()) {
-    if (file in commentLengthSkips) {
+    if (file in commentLengthSkips || generatedFromReact.test(file)) {
       continue
     }
     for (const comment of commentsOf(file)) {

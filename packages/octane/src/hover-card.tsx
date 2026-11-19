@@ -45,9 +45,7 @@ function HoverCard({ children, container, ...options }: HoverCardProps) {
   useControllerEntry(options.controller, handle)
   return (
     <HandleScope handle={handle}>
-      <ContainerContext value={container}>
-        {children}
-      </ContainerContext>
+      <ContainerContext value={container}>{children}</ContainerContext>
     </HandleScope>
   )
 }

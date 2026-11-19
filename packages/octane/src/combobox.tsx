@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -109,11 +111,10 @@ type ComboboxProps<
  * `multiple` makes the value a list.
  * @stable
  */
-const Combobox = descriptorChildren(function Combobox<T = string, Multiple extends boolean | undefined = false>({
-  children,
-  container,
-  ...options
-}: ComboboxProps<T, Multiple>) {
+const Combobox = descriptorChildren(function Combobox<
+  T = string,
+  Multiple extends boolean | undefined = false,
+>({ children, container, ...options }: ComboboxProps<T, Multiple>) {
   const field = useFieldControl()
   const combobox = usePrimitive(comboboxPrimitive, {
     ...(options as ComboboxOptions<any, any>),
@@ -266,10 +267,9 @@ const ComboboxItemText = descriptorChildren(function ComboboxItemText({
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
-  const content =
-    isStateFunction(children)
-      ? children
-      : (state: ComboboxItemTextState) => markSegments(state.segments)
+  const content = isStateFunction(children)
+    ? children
+    : (state: ComboboxItemTextState) => markSegments(state.segments)
   return usePart(
     comboboxPrimitive,
     "item-text",
@@ -394,11 +394,7 @@ function ComboboxEmpty({
   ...props
 }: PartProps<"div", ComboboxEmptyState>) {
   const content = (state: ComboboxEmptyState) =>
-    isStateFunction(children)
-      ? children(state)
-      : state.empty
-        ? children
-        : null
+    isStateFunction(children) ? children(state) : state.empty ? children : null
   return usePart(
     comboboxPrimitive,
     "empty",
@@ -428,14 +424,13 @@ function ComboboxValue({
   getMoreLabel,
   children,
 }: ComboboxValueProps & {
-  children?: React.ReactNode | ((state: ComboboxValueState) => React.ReactNode)
+  children?:
+    {} | null | undefined | ((state: ComboboxValueState) => React.ReactNode)
 }) {
   // Its state, without an element.
   const value = (_props: unknown, state: ComboboxValueState) => (
     <>
-      {isStateFunction(children)
-        ? children(state)
-        : (children ?? state.label)}
+      {isStateFunction(children) ? children(state) : (children ?? state.label)}
     </>
   )
   return usePart(
@@ -485,11 +480,7 @@ function ComboboxChip<T = string>({
   const part = { id: combobox.api.internal.keyOf(value), value }
   const chip = React.useMemo(() => ({ value }), [value])
   const jsxHook0 = usePart(combobox, "chip", part, { ...props, children })
-  return (
-    <ChipContext value={chip}>
-      {jsxHook0}
-    </ChipContext>
-  )
+  return <ChipContext value={chip}>{jsxHook0}</ChipContext>
 }
 
 const label = (state: ComboboxChipState) => state.label

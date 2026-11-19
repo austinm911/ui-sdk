@@ -556,7 +556,7 @@ function elementProps(
   state: object
 ) {
   takeOwnId(part, user.id)
-  const handlers: Record<string, (event: React.SyntheticEvent) => void> = {}
+  const handlers: Record<string, (event: Event) => void> = {}
   for (const [type, handler] of Object.entries(partHandlers(part))) {
     const prop = eventProps[type]
     if (!prop) {
@@ -597,7 +597,7 @@ type PartProps<
   /** Renders your own element: one that receives the part's props, or a function of the props and the state. */
   render?: RenderProp<State>
   /** Content, or a function of the part's state that returns it. */
-  children?: React.ReactNode | ((state: State) => React.ReactNode)
+  children?: {} | null | undefined | ((state: State) => React.ReactNode)
 }
 
 // Attributes in `skip` may differ.
@@ -860,7 +860,11 @@ function HandleScope({
 }) {
   const { context } = scopeOf(handle.primitive)
   const scope = React.useMemo(() => ({ handle, around: {} }), [handle])
-  return <Provide context={context} value={scope}>{children}</Provide>
+  return (
+    <Provide context={context} value={scope}>
+      {children}
+    </Provide>
+  )
 }
 
 /** The nearest instance of a primitive, or undefined outside its root, like a toggle's group. */
@@ -969,7 +973,11 @@ function usePart<
   if (provided === scope) {
     return element
   }
-  return <Provide context={context} value={provided}>{element}</Provide>
+  return (
+    <Provide context={context} value={provided}>
+      {element}
+    </Provide>
+  )
 }
 
 // "tab-icon" is `TabIcon`.
@@ -1236,6 +1244,18 @@ function sharesProps(primitive: Primitive, slot: string) {
   scopeOf(primitive).provides.add(slot)
 }
 
+function Provide({
+  context: Context,
+  value,
+  children,
+}: {
+  context: React.Context<any>
+  value: unknown
+  children?: React.ReactNode
+}) {
+  return <Context value={value}>{children}</Context>
+}
+
 export {
   createParts,
   extendHandle,
@@ -1259,8 +1279,4 @@ export {
   useNearest,
   usePart,
   usePrimitive,
-}
-
-function Provide({ context: Context, value, children }: { context: React.Context<any>; value: unknown; children?: React.ReactNode }) {
-  return <Context value={value}>{children}</Context>
 }

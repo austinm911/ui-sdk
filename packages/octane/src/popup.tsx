@@ -69,9 +69,7 @@ function Popup({
     ref: mergeRefs(part.props.ref ?? null, tree.track),
   })
   const content = container ? (
-    <InheritedContainer value={container}>
-      {tracked}
-    </InheritedContainer>
+    <InheritedContainer value={container}>{tracked}</InheritedContainer>
   ) : (
     tracked
   )
@@ -232,7 +230,7 @@ function sheetViewport<State>(
  * `inSheetHeader`, so there's one input at a time.
  */
 const SheetHeaderContext = /* @__PURE__ */ React.createContext<
-  [HTMLElement | null, (header: HTMLElement | null) => void]
+  [HTMLElement | null, (header: HTMLElement | null) => void, ...unknown[]]
 >([null, () => {}])
 
 /** The header at the top of a sheet's content, while the popup's `header` slot is present. */

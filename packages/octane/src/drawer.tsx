@@ -72,9 +72,7 @@ function Drawer({ children, container, ...options }: DrawerProps) {
   useControllerEntry(options.controller, handle)
   return (
     <HandleScope handle={handle}>
-      <ContainerContext value={container}>
-        {children}
-      </ContainerContext>
+      <ContainerContext value={container}>{children}</ContainerContext>
     </HandleScope>
   )
 }

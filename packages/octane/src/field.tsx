@@ -107,9 +107,7 @@ function Field({
   const jsxHook0 = usePart(field, "root", {}, props, "div")
   return (
     <FieldContext value={context}>
-      <DescribedContext value={field}>
-        {jsxHook0}
-      </DescribedContext>
+      <DescribedContext value={field}>{jsxHook0}</DescribedContext>
     </FieldContext>
   )
 }
@@ -232,11 +230,7 @@ function FieldSet({
 }: FieldSetOptions & Omit<PartProps<"fieldset", FieldSetState>, "disabled">) {
   const set = usePrimitive(fieldSet, { disabled, debug })
   const jsxHook1 = usePart(set, "set", {}, props, "fieldset")
-  return (
-    <DescribedContext value={set}>
-      {jsxHook1}
-    </DescribedContext>
-  )
+  return <DescribedContext value={set}>{jsxHook1}</DescribedContext>
 }
 
 /**

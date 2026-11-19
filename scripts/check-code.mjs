@@ -140,6 +140,8 @@ const htmlSinkAllowlist = {
     "Writes the editor's markup, which core builds from escaped text.",
   "packages/vue/src/token-input.ts":
     "Writes the editor's markup, which core builds from escaped text.",
+  "packages/octane/src/token-input.tsx":
+    "Writes the editor's markup, which core builds from escaped text.",
   "packages/react/src/preferences.tsx":
     "Writes the script that shows saved preferences before paint. Core builds it from JSON with `<` escaped.",
   "packages/solid/src/preferences.tsx":
@@ -147,6 +149,8 @@ const htmlSinkAllowlist = {
   "packages/svelte/src/preferences/preferences.svelte":
     "Writes the script that shows saved preferences before paint. Core builds it from JSON with `<` escaped.",
   "packages/vue/src/preferences.ts":
+    "Writes the script that shows saved preferences before paint. Core builds it from JSON with `<` escaped.",
+  "packages/octane/src/preferences.tsx":
     "Writes the script that shows saved preferences before paint. Core builds it from JSON with `<` escaped.",
   "packages/web/src/list.ts":
     "Reads an item's markup to tell whether it was made again. Writes none.",
@@ -215,7 +219,7 @@ const publicNameAllowlist = {
 const registries = ["registerShortcut", "registerTools"]
 
 // The packages that render primitives, which import core only through its entries.
-const renderers = ["react", "vue", "solid", "svelte", "web"]
+const renderers = ["react", "vue", "solid", "svelte", "web", "octane"]
 
 // Renderer entries whose component lives in a core entry of another name, each with why.
 const coreEntryOf = {

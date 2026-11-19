@@ -82,9 +82,7 @@ function Tokens({
     .hosts()
     .map(({ id, token, host }) =>
       createPortal(
-        <TokenContext value={id}>
-          {renderToken(token)}
-        </TokenContext>,
+        <TokenContext value={id}>{renderToken(token)}</TokenContext>,
         host,
         id
       )

@@ -62,7 +62,9 @@ test.describe("custom rendering", () => {
 
   test("class names follow the part's state", async ({ page, framework }) => {
     test.skip(
-      !framework.startsWith("react") && framework !== "octane" && !framework.startsWith("solid"),
+      !framework.startsWith("react") &&
+        framework !== "octane" &&
+        !framework.startsWith("solid"),
       "Class functions are React and Solid only. Vue uses slot state."
     )
     const box = page.getByRole("checkbox", { name: "Class from state" })

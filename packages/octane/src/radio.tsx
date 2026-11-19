@@ -67,16 +67,12 @@ function RadioGroup<T extends string = string>({
     debug,
   })
   const jsxHook0 = usePart(
-        group,
-        "group",
-        {},
-        { ...props, render: controlRender(field, "div", render) }
-      )
-  return (
-    <GroupFieldContext value={groupField}>
-      {jsxHook0}
-    </GroupFieldContext>
+    group,
+    "group",
+    {},
+    { ...props, render: controlRender(field, "div", render) }
   )
+  return <GroupFieldContext value={groupField}>{jsxHook0}</GroupFieldContext>
 }
 
 // The hidden native radio that takes part in the form.

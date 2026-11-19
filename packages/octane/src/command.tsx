@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import {
@@ -211,10 +213,9 @@ const CommandItemText = descriptorChildren(function CommandItemText({
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
-  const content =
-    isStateFunction(children)
-      ? children
-      : (state: CommandItemTextState) => markSegments(state.segments)
+  const content = isStateFunction(children)
+    ? children
+    : (state: CommandItemTextState) => markSegments(state.segments)
   return usePart(
     commandPrimitive,
     "item-text",
@@ -262,11 +263,7 @@ function CommandPage({
   children,
 }: CommandPageProps & { children?: React.ReactNode }) {
   // Its presence, without an element.
-  const page = () => (
-    <PageContext value={value ?? null}>
-      {children}
-    </PageContext>
-  )
+  const page = () => <PageContext value={value ?? null}>{children}</PageContext>
   return usePart(commandPrimitive, "page", { value }, { render: page })
 }
 
@@ -297,11 +294,7 @@ function CommandEmpty({
   ...props
 }: PartProps<"div", CommandEmptyState>) {
   const content = (state: CommandEmptyState) =>
-    isStateFunction(children)
-      ? children(state)
-      : state.empty
-        ? children
-        : null
+    isStateFunction(children) ? children(state) : state.empty ? children : null
   return usePart(commandPrimitive, "empty", {}, { ...props, children: content })
 }
 

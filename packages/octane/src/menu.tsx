@@ -2,7 +2,9 @@
 import { descriptorChildren } from "octane"
 import { isChildrenBlock } from "octane"
 
-function isStateFunction<T>(value: T): value is Extract<T, (...args: never[]) => unknown> {
+function isStateFunction(
+  value: unknown
+): value is (...args: unknown[]) => unknown {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 import { formatShortcut } from "@ui-sdk/core"
@@ -104,7 +106,12 @@ type MenuProps = MenuOptions & {
  * A list of actions and options, opened from a button or a right-click. Put its trigger and content inside.
  * @stable
  */
-const Menu = descriptorChildren(function Menu({ children, items, container, ...options }: MenuProps) {
+const Menu = descriptorChildren(function Menu({
+  children,
+  items,
+  container,
+  ...options
+}: MenuProps) {
   const menubar = React.useContext(MenubarContext)
   const menu = usePrimitive(menuPrimitive, {
     items,
@@ -340,11 +347,7 @@ function MenuCheckboxItem({
     [value]
   )
   const jsxHook0 = usePart(menu, "checkbox-item", item, { ...props, render })
-  return (
-    <ItemContext value={indicator}>
-      {jsxHook0}
-    </ItemContext>
-  )
+  return <ItemContext value={indicator}>{jsxHook0}</ItemContext>
 }
 
 /**
@@ -398,11 +401,7 @@ function MenuRadioItem({
     throw new Error("<MenuRadioItem> must be used inside <MenuRadioGroup>.")
   }
   const jsxHook1 = usePart(menu, "radio-item", item, { ...props, render })
-  return (
-    <ItemContext value={indicator}>
-      {jsxHook1}
-    </ItemContext>
-  )
+  return <ItemContext value={indicator}>{jsxHook1}</ItemContext>
 }
 
 /**
@@ -457,11 +456,7 @@ function MenuGroup(props: PartProps<"div">) {
   const id = React.useId()
   // It's named by its label once the label is in the page.
   const jsxHook2 = usePart(useMenu(), "group", { id }, props)
-  return (
-    <GroupContext value={id}>
-      {jsxHook2}
-    </GroupContext>
-  )
+  return <GroupContext value={id}>{jsxHook2}</GroupContext>
 }
 
 /**
