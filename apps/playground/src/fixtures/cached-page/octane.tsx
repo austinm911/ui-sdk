@@ -46,6 +46,9 @@ const container = params.has("container")
 const popup = params.get("popup") ?? "dialog"
 
 // The popup's title, a field to type in, a way to leave the page, and Close.
+// Octane's compiler mishandles a static <Activity> here.
+const Hideable = ({ Activity: React.Activity } as Record<string, typeof React.Activity>).Activity
+
 function Fields({
   Title,
   Close,
@@ -123,16 +126,16 @@ function Fixture() {
   return (
     <div className="fixture">
       <button>Before</button>
-      <React.Activity mode={page === "profile" ? "visible" : "hidden"}>
+      <Hideable mode={page === "profile" ? "visible" : "hidden"}>
         <section>
           <ProfilePage onLeave={() => setPage("other")} />
         </section>
-      </React.Activity>
-      <React.Activity mode={page === "other" ? "visible" : "hidden"}>
+      </Hideable>
+      <Hideable mode={page === "other" ? "visible" : "hidden"}>
         <section>
           <button onClick={() => setPage("profile")}>Back to profile</button>
         </section>
-      </React.Activity>
+      </Hideable>
     </div>
   )
 }

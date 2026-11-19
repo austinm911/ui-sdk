@@ -3,7 +3,7 @@ import { Tree } from "@ui-sdk/octane/tree"
 import * as React from "octane"
 import { createRoot } from "octane"
 import { treeLinksFixture } from "tests/fixtures/tree.ts"
-import { Items } from "../tree/react"
+import { Items } from "../tree/octane"
 
 // A tree of links, rendered with the tree fixture's classes. The current page follows the address.
 function Fixture() {

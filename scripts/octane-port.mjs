@@ -207,9 +207,22 @@ writeFileSync(join(root, "packages/octane/package.json"), JSON.stringify(manifes
 const textInputs = (source) =>
   source.replace(/onChange=\{([^}]*)\}/g, (all, handler) => (handler.includes("checked") ? all : `onInput={${handler}}`))
 
+// Octane 0.22's compiler drops \`__props\` in an <Activity> body that holds a
+// component element, when it knows the tag is Activity (a ReferenceError on mount).
+// Reached through a lookup, the tag compiles as a component.
+const activityTag = (source) =>
+  source.includes("<React.Activity")
+    ? source
+        .replaceAll("<React.Activity", "<Hideable")
+        .replaceAll("</React.Activity>", "</Hideable>")
+        .replace(/\nfunction /, "\n// Octane's compiler mishandles a static <Activity> here.\nconst Hideable = ({ Activity: React.Activity } as Record<string, typeof React.Activity>).Activity\n\nfunction ")
+    : source
+
 // Octane has no Profiler. Specs read its commit count on React only.
 const fixtureOnly = (source) =>
-  textInputs(source).replace(/<React\.Profiler\b[\s\S]*?\}>/g, "<>").replaceAll("</React.Profiler>", "</>")
+  activityTag(textInputs(source))
+    // A fixture that borrows from another imports that fixture's Octane module.
+    .replace(/from "\.\.\/([\w-]+)\/react"/g, 'from "../$1/octane"').replace(/<React\.Profiler\b[\s\S]*?\}>/g, "<>").replaceAll("</React.Profiler>", "</>")
 
 // The fixtures: each React fixture's Octane twin, unless one is written by hand (`octane.manual.tsx`).
 const fixtures = join(root, "apps/playground/src/fixtures")
