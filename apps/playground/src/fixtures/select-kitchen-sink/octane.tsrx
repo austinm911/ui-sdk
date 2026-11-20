@@ -273,7 +273,7 @@ function VariantSelect({ variant, env }: { variant: Variant; env: Env }) {
 
 function mount(root: HTMLElement) {
   // The shell names only the frameworks it links between, so it's told React.
-  kitchenSink(root, "react", (slot, variant, env) =>
+  kitchenSink(root, "octane", (slot, variant, env) =>
     // Every card is its own root, so each gets its own id prefix.
     createRoot(slot, { identifierPrefix: `${variant.id}-` }).render(
       <VariantSelect variant={variant} env={env} />

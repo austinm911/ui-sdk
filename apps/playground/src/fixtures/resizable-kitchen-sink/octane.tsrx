@@ -157,7 +157,7 @@ function Card({ variant, log }: { variant: Variant; log: Log }) {
 
 function mount(root: HTMLElement) {
   // The shell names only the frameworks it links to, so this page shows as React's.
-  renderShell(root, "react", (slot, variant, log) =>
+  renderShell(root, "octane", (slot, variant, log) =>
     createRoot(slot).render(<Card variant={variant} log={log} />)
   )
 }

@@ -227,7 +227,7 @@ function VariantMenu({ variant, env }: { variant: Variant; env: Env }) {
 }
 
 function mount(root: HTMLElement) {
-  kitchenSink(root, "react", (slot, variant, env) =>
+  kitchenSink(root, "octane", (slot, variant, env) =>
     createRoot(slot).render(<VariantMenu variant={variant} env={env} />)
   )
 }

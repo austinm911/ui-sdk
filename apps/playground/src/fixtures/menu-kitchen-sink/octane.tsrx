@@ -191,7 +191,7 @@ function VariantMenu({ variant, env }: { variant: Variant; env: Env }) {
 
 function mount(root: HTMLElement) {
   // The shell names only the frameworks it links between, so it's told React.
-  kitchenSink(root, "react", (slot, variant, env) =>
+  kitchenSink(root, "octane", (slot, variant, env) =>
     createRoot(slot).render(<VariantMenu variant={variant} env={env} />)
   )
 }

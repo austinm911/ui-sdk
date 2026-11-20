@@ -181,7 +181,7 @@ function Card({ variant, log }: { variant: Variant; log: Log }) {
 }
 
 function mount(root: HTMLElement) {
-  renderShell(root, "react", (slot, variant, log) =>
+  renderShell(root, "octane", (slot, variant, log) =>
     createRoot(slot).render(<Card variant={variant} log={log} />)
   )
 }

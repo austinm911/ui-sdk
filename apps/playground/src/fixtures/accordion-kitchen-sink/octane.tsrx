@@ -233,7 +233,7 @@ function VariantAccordion({ variant, env }: { variant: Variant; env: Env }) {
 
 function mount(root: HTMLElement) {
   // The shell names only the frameworks it links to, so this page shows as React's.
-  kitchenSink(root, "react", (slot, variant, env) =>
+  kitchenSink(root, "octane", (slot, variant, env) =>
     createRoot(slot).render(<VariantAccordion variant={variant} env={env} />)
   )
 }
