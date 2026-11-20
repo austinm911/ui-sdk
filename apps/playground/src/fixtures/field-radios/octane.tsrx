@@ -1,0 +1,49 @@
+"use strong"
+import { Field, FieldLabel } from "@ui-sdk/octane/field"
+import { Radio, RadioGroup, RadioIndicator } from "@ui-sdk/octane/radio"
+import * as React from "octane"
+import { createRoot } from "octane"
+import {
+  fieldRadiosFixture as f,
+  fieldRadiosOptions,
+} from "tests/fixtures/field.ts"
+
+function Fixture() {
+  const { disabledField } = React.useInitialValue(fieldRadiosOptions)
+  const [firstDisabled, setFirstDisabled] = React.useState(false)
+  return (
+    <div className="fixture">
+      <button>{"Before"}</button>
+      <Field>
+        <FieldLabel>{f.label}</FieldLabel>
+        <RadioGroup className="form" name={f.name}>
+          @for (const size of f.sizes; key size.value) {
+            <Field
+              className="row"
+              disabled={size === f.sizes[0] && disabledField}
+            >
+              <Radio
+                className="radio"
+                value={size.value}
+                disabled={size === f.sizes[0] && firstDisabled}
+              >
+                <RadioIndicator className="radio-indicator" />
+              </Radio>
+              <FieldLabel>{size.label}</FieldLabel>
+            </Field>
+          }
+        </RadioGroup>
+      </Field>
+      <button>{"After"}</button>
+      <button onClick={() => setFirstDisabled((disabled) => !disabled)}>
+        {f.disableFirst}
+      </button>
+    </div>
+  )
+}
+
+function mount(root: HTMLElement) {
+  createRoot(root).render(<Fixture />)
+}
+
+export { Fixture, mount }

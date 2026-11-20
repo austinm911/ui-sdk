@@ -109,6 +109,7 @@ type ButtonControlProps<State> = Omit<
   | "defaultChecked"
   | "defaultValue"
   | "onChange"
+  | "onInput"
   | "onSelect"
 >
 

@@ -16,7 +16,7 @@ type TextProps = {
   disabled?: boolean
   readOnly?: boolean
   required?: boolean
-  onChange?: unknown
+  onInput?: unknown
 }
 
 // The states a text field's attributes follow, from its own props and its field's.
@@ -44,7 +44,7 @@ function elementProps<Props extends TextProps>(
     ...props,
     value,
     defaultValue,
-    onChange: props.onChange ?? (value === undefined ? undefined : ignore),
+    onInput: props.onInput ?? (value === undefined ? undefined : ignore),
   }
 }
 
