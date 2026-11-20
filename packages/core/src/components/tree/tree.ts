@@ -1,4 +1,5 @@
 import { isDisabled, watchFormDisabled } from "../../foundation/forms/form"
+import { onProps } from "../../foundation/kernel/part"
 import { hiddenAttrs } from "../../foundation/motion/panel"
 import { checkedAttrs, idPart, openAttrs } from "../../foundation/kernel/attrs"
 import { createController } from "../../foundation/kernel/controller"
@@ -643,7 +644,10 @@ const treePrimitive = /* @__PURE__ */ definePrimitive({
           ownEvent(el, event) &&
           api.internal.keydown(event as KeyboardEvent, el, key),
       },
-      bind: (el, part) => part.api.internal.bindItem(el, part),
+      bind: (el, part) =>
+        part.api.internal.bindItem(el, part, (listener) =>
+          onProps(part, listener)
+        ),
     }),
 
     // The item's text, which names it. A link here is the item's link.
