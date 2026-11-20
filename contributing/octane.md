@@ -73,6 +73,15 @@ target, tree)`. See `SelectContent`.
 - **No type arguments on a JSX tag,** like `<Select<string, boolean>>`.
   Prettier's `.tsrx` parser rejects them. Let the props infer the types, or
   name an instantiation first: `const AnySelect = Select<string, boolean>`.
+- **State from a prop** starts from a lazy initializer, `useState(() =>
+props.value)`, since `useState(props.value)` is rejected. A remount is
+  `key={value}` on the component, not a one-item `@for`.
+- **Raw HTML** is `dangerouslySetInnerHTML={trustHTML(html)}`, with
+  `trustHTML` imported by name from `"octane"`. `suppressHydrationWarning` is
+  rejected.
+- **Children as a prop.** Children written inside a part's tags reach it as a
+  render function, which hides a state function and defeats a `children ??
+default` fallback. Pass them on as `children={children}`.
 - **Types.** Content is `unknown`, not `React.ReactNode`, and a component
   returns what its JSX returns. Never use `any` beyond what the React file
   already has. A cast needs a comment that says why it holds.
