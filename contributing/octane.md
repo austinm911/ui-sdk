@@ -1,37 +1,115 @@
 # The Octane adapter
 
-[Octane](https://octanejs.dev) implements React's component API, so `packages/octane` is generated from `packages/react` instead of written by hand. Nothing in `packages/octane/src` or a playground `octane.tsx` fixture is edited directly. A change goes to the React source or to `scripts/octane-port.mjs`, and then:
+`packages/octane` is written in Octane's own `.tsrx`, the way the Vue and
+Svelte adapters use their frameworks' syntax. Every file that calls a hook or
+renders markup is a `.tsrx` module that starts with `"use strong"`, Octane's
+strict mode. Plain `.ts` holds only code without hooks or markup, like
+contexts and re-exports. The React adapter is the model for behavior, and the
+Solid adapter is the model wherever React reads its children.
+
+Octane compiles each hook call into a slot of its own, so a hook called from a
+plain `.ts` file shares its caller's slot. Keep every hook in `.tsrx`.
+
+## Porting a component
+
+Start from the React component and keep its parts, props, comments and order.
+Then make these changes.
+
+- **Imports.** `import * as React from "octane"`, and `createPortal` and
+  `createRoot` from `"octane"`. Local modules keep their extension:
+  `./use-primitive.tsrx`, `./popup.tsrx`, `./field-context.tsrx`.
+- **Providers.** A context is its own provider: `<Ctx value={v}>`, never
+  `<Ctx.Provider>`. Bind a context from an object to a capitalized name first:
+  `const Provider = scope.context`.
+- **Hooks above the markup.** Call `usePart` and every other hook before the
+  `return`, and put the result in the markup: `const element = usePart(...)`,
+  then `<Ctx value={v}>{element}</Ctx>`. A hook inside a JSX child runs in
+  that child's scope, not the component's.
+- **Effects and memos.** Omit every dependency list. The compiler infers it
+  from what the callback reads, and Strong mode rejects an explicit list and
+  `null`. A callback that must not re-run for a value it reads goes in
+  `useEffectEvent`.
+- **No state updates in effect setup,** not even in a microtask or a
+  transition. Derive the value in render, use `useSyncExternalStore` for an
+  outside source, or call the setter from an event or a subscription
+  callback.
+- **No refs read during render.** Read `ref.current` in effects and handlers.
+  Initial values that never change come from `useInitialValue(() => ...)`,
+  and a mutable holder from `useLazyRef`. A `useState` whose setter is
+  never used is rejected.
+- **No reassigned module `let`** read from render or from an effect. Keep
+  module state in a `const` object and change its properties.
+- **No browser globals in render,** like `location` or `window`. Read them
+  in `useInitialValue`, an effect, or `useSyncExternalStore`.
+- **Lists.** `@for (const item of items; key item.id) { ... }`. A key may not
+  come from the loop index, so give separators and other unnamed entries an
+  id from a `WeakMap` keyed by the entry object, computed in a `rows` array
+  before the loop (see `list-items.tsrx`). A row may not change a variable
+  declared outside the loop.
+- **Conditionals.** `@if (cond) { ... } @else { ... }` in markup. A branch or
+  loop body that holds more than one node, or bare text, wraps it in `<>...</>`.
+  Text from a variable is `{text}`, and literal text is `{"Text"}`.
+- **Children are compiled functions.** Octane passes template children as a
+  render function. Never test `typeof children === "function"`. Use
+  `isStateFunction(children)` from `./render-element.tsrx`, which is true only
+  for a function of the part's state. Render children as `{children}`.
+- **No reading children.** `createElement`, `cloneElement`, `Children`,
+  `isValidElement` and `descriptorChildren` are off limits. A root that
+  renders its own content part unless the app placed one uses
+  `usePlacedContent` and `usePlaceContent` from `./children.tsrx`, as
+  `select.tsrx` does. A root that learned labels from its children instead
+  mounts its list hidden through `internal.prepare()` in an effect, as
+  `Select` does.
+- **`render` is a function only:** `(props, state) => <a {...props} />`.
+  Drop React's element form and anything that read an element's props, like
+  `ownDescription`.
+- **Events are native.** Handlers receive DOM events, with no
+  `nativeEvent`. React's `onChange` on text inputs is `onInput` here, and the
+  element props types add `"onInput"` to each component's `Clashing` list
+  where React's has `"onChange"`.
+- **Popups.** A popup's content part takes the tree ref through its props:
+  `const tree = usePopupTree()`, pass `ref: mergeRefs(ref ?? null,
+  tree.track)` to `usePart`, and return `element && renderPopup(element,
+  target, tree)`. See `SelectContent`.
+- **Types.** Content is `unknown`, not `React.ReactNode`, and a component
+  returns what its JSX returns. Never use `any` beyond what the React file
+  already has. A cast needs a comment that says why it holds.
+
+`use-primitive.tsrx` deviates from Strong mode in one place. Octane runs
+passive effects after paint and subscribes `useSyncExternalStore` in one, but
+core needs a part subscribed at commit, since a submenu that just opened must
+answer a key pressed in the same frame. Each part subscribes in a layout
+effect and re-renders through a reducer, whose count it reads once with
+`void`. Bind writes also run in a layout effect, before paint.
+
+## Fixtures
+
+Each fixture is `apps/playground/src/fixtures/<name>/octane.tsrx`, ported
+from the React fixture next to it with the same rules. Mount with
+`createRoot(root).render(<Fixture />)`, without `StrictMode`. Read the page's
+options, like `selectOptions()`, once with `React.useInitialValue(...)`.
+React-only pieces, like `React.Profiler`, are dropped.
+
+## Checking a file
+
+The compiler reports Strong mode errors with their rule name, like
+`OCTANE_STRONG_EFFECT_STATE_UPDATE`. Compile a file from `apps/playground`:
 
 ```sh
-node scripts/octane-port.mjs
+node -e 'import("octane/compiler").then(async ({ compile }) => { const f = process.argv[1]; await compile(require("fs").readFileSync(f, "utf8"), f, {}); console.log("ok") })' <file>
 ```
 
-## What the port rewrites
+Then run the component's specs on the playground dev server:
 
-Most of the port swaps `react` and `react-dom` imports for `octane`. Each remaining rewrite covers one place where Octane differs from React:
-
-| Octane differs                                                                                                  | The port                                                                                                          |
-| --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| A context renders as its own provider, with no `.Provider`.                                                     | Renders `<Context value>`. A context in a lowercase binding goes through a `Provide` component.                   |
-| A hook with no dependency list gets one inferred from its closure. React runs it every render.                  | Passes `null`, Octane's "every render".                                                                           |
-| JSX children compile into a scope of their own, which owns any hook called there.                               | Moves a hook written as a JSX child, like `{usePart(...)}`, above the `return`.                                   |
-| JSX children arrive as a compiled render function, not elements or text.                                        | Wraps components that read their children (`hasChild`, `learnLabels`, `textToMark`) in `descriptorChildren`.      |
-| A compiled children function is a function, but not a function of the part's state.                             | Tests `typeof children === "function"` with `isChildrenBlock` too.                                                |
-| Handlers get the native event, and there's no synthetic `onChange`. A text field fires `onInput` per keystroke. | Drops `nativeEvent`, maps core's `input` to `onInput`, and gives a controlled text field a no-op `onInput`.       |
-| `useId` can't be called in a loop.                                                                              | Derives each part's id from one `useId`.                                                                          |
-| A node is typed `unknown`, which swallows `(state) => node` in a union.                                         | Types those unions as `{} \| null \| undefined \| ((state) => node)`, so a children function gets its state type. |
-| `useState` also returns a getter. A host's `style` may be a string.                                             | Lets the sheet header context take the getter, and spreads `style` only when it's an object.                      |
-
-Fixtures also drop `<React.Profiler>`, which Octane lacks, import a sibling fixture's Octane module, and read a checkbox from `event.currentTarget`, which Octane types by the element. `<React.Activity>` goes through a lookup, since Octane 0.22's compiler drops `props` in a static `<Activity>` body that holds a component. Each rewrite that replaces exact upstream text throws when that text changes, so a React change that needs a new rewrite fails the port loudly.
+```sh
+cd tests && PLAYGROUND_PORT=<port> npx playwright test specs/<name> --project octane
+```
 
 ## Parity
 
-The `octane` Playwright project runs the same specs as `react`. Parity means Octane passes every spec React passes, exports every entry React exports, and has every React fixture:
+`node scripts/octane-parity.mjs tests/test-results/parity.json` writes
+`parity/PARITY.md` from a JSON run of the `react` and `octane` projects:
 
 ```sh
-cd tests
-PLAYWRIGHT_JSON_OUTPUT_NAME=test-results/parity.json npx playwright test --project react --project octane --reporter=json
-cd .. && node scripts/octane-parity.mjs tests/test-results/parity.json
+cd tests && PLAYWRIGHT_JSON_OUTPUT_NAME=test-results/parity.json npx playwright test --project react --project octane --reporter=json
 ```
-
-It writes `parity/PARITY.md` and exits non-zero until Octane is at parity. Specs that run once, on React, because they don't depend on the framework ("Framework independent.") don't count.
