@@ -4,7 +4,7 @@ import { expect, test } from "../fixtures"
 // only proves every variant renders, responds and resets without errors.
 test("every slider kitchen sink variant works", async ({ page, framework }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

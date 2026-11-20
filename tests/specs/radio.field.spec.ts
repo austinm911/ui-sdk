@@ -91,6 +91,8 @@ test.describe("a disabled radio", () => {
     await open("field-radios")
     await page.getByRole("button", { name: f.disableFirst }).click()
     await expect(radio(page, small.label)).toBeDisabled()
+    // The tab stop moves a moment after the radio disables.
+    await expect(radio(page, medium.label)).toHaveAttribute("tabindex", "0")
     await page.getByRole("button", { name: "Before" }).focus()
     await tab()
     await expect(radio(page, medium.label)).toBeFocused()
@@ -107,6 +109,8 @@ test.describe("a disabled radio", () => {
     await expect(radio(page, small.label)).toBeDisabled()
     await page.getByRole("button", { name: f.disableFirst }).click()
     await expect(radio(page, small.label)).toBeEnabled()
+    // The tab stop moves back a moment after the radio enables.
+    await expect(radio(page, small.label)).toHaveAttribute("tabindex", "0")
     await page.getByRole("button", { name: "Before" }).focus()
     await tab()
     await expect(radio(page, small.label)).toBeFocused()

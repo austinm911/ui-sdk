@@ -5,7 +5,8 @@
     "src/fixtures/*/solid*.tsx",
     "src/ssr/solid.ts",
     "src/ssr/hydrate.ts",
-    "solid-ssr.ts"
+    "solid-ssr.ts",
+    "src/fixtures/*/octane.tsx"
   ],
   "compilerOptions": {
     "types": ["vite/client"]

@@ -60,7 +60,7 @@ test.describe("custom rendering", () => {
     framework,
   }) => {
     test.skip(
-      !framework.startsWith("react"),
+      !framework.startsWith("react") && framework !== "octane",
       "Class functions are React only. Vue uses slot state."
     )
     const indicator = page.locator(".slider-indicator")

@@ -104,10 +104,11 @@ test.describe("native scrollbars", { tag: "@enhancement" }, () => {
     open,
   }) => {
     await open("scroll-area")
+    // A dev server serves the page's own stylesheets as style elements too.
     const injected = await page.evaluate(() =>
-      Array.from(document.querySelectorAll("style")).some((style) =>
-        style.textContent?.includes("scrollbar-width")
-      )
+      Array.from(
+        document.querySelectorAll("style:not([data-vite-dev-id])")
+      ).some((style) => style.textContent?.includes("scrollbar-width"))
     )
     expect(injected).toBe(false)
   })

@@ -424,6 +424,10 @@ function drawerApiBody(
       attach,
       detach,
       stepHandle,
+      // Called from the backdrop's bind, which may come after the sheet opened.
+      backdropBound(el: HTMLElement) {
+        sheet?.backdropBound(el)
+      },
       registerOutlet(el: HTMLElement, key: string) {
         const outlet = {
           el,

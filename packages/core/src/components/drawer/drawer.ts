@@ -440,6 +440,7 @@ const drawerPrimitive = /* @__PURE__ */ definePrimitive({
           write()
           const off = store.subscribe(write)
           const unbind = api.internal.popup.backdrop(el)
+          api.internal.backdropBound(el)
           return () => {
             off()
             unbind()

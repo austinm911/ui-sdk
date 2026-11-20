@@ -325,7 +325,10 @@ test.describe("render counts", () => {
     open,
     framework,
   }) => {
-    test.skip(!framework.startsWith("react"), "Counts React renders.")
+    test.skip(
+      !framework.startsWith("react") && framework !== "octane",
+      "Counts React renders."
+    )
     await open("alignment")
     await page.getByRole("button", { name: "View" }).click()
     await expect(menuNamed(page, "View")).toBeVisible()

@@ -16,12 +16,13 @@ type Env = {
   anchor?: HTMLElement
 }
 
-type Framework = "react" | "vue" | "web"
+type Framework = "react" | "vue" | "web" | "octane"
 
 const frameworks: Record<Framework, string> = {
   react: "React",
   vue: "Vue",
   web: "Web Components",
+  octane: "Octane",
 }
 
 // A short, readable form of a value for the log: strings, lists and country objects.

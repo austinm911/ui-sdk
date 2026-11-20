@@ -37,7 +37,7 @@ async function expectClosed(page: Page, label: string) {
 
 test("every kitchen sink variant opens", async ({ page, framework, tab }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

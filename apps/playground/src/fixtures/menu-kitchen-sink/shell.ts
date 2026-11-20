@@ -10,12 +10,13 @@ type Env = {
   container?: HTMLElement
 }
 
-type Framework = "react" | "vue" | "web"
+type Framework = "react" | "vue" | "web" | "octane"
 
 const frameworks: Record<Framework, string> = {
   react: "React",
   vue: "Vue",
   web: "Web Components",
+  octane: "Octane",
 }
 
 // Builds the page in plain DOM and asks the framework to mount one menu per card.

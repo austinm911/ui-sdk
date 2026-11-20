@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react"
 import vue from "@vitejs/plugin-vue"
 import solid from "@solidjs/vite-plugin"
 import tailwind from "@tailwindcss/vite"
+import { octane } from "octane/compiler/vite"
 import { defineConfig } from "vite"
 import { ssrFixtures } from "./ssr-plugin"
 import { solidSsr } from "./solid-ssr.ts"
@@ -15,9 +16,13 @@ const solidFiles = [
   "**/examples/components/*/solid/**",
 ]
 
+// Octane compiles the files that carry its `@jsxImportSource octane` pragma.
+const octaneFiles = ["**/packages/octane/**", "**/fixtures/*/octane*.tsx"]
+
 export default defineConfig({
   plugins: [
-    react({ exclude: solidFiles }),
+    octane({ requireDirective: true }),
+    react({ exclude: [...solidFiles, ...octaneFiles] }),
     vue(),
     svelte(),
     solid({ include: solidFiles, ssr: true }),

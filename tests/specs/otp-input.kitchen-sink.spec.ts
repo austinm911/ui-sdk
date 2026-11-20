@@ -9,7 +9,7 @@ test("every OTP input kitchen sink variant takes a code", async ({
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)
@@ -112,7 +112,7 @@ test("a controlled OTP input keeps the caret where a character was deleted or ty
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   await page.goto(`/?fixture=otp-input-kitchen-sink&framework=${framework}`)

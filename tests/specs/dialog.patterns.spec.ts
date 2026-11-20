@@ -71,7 +71,10 @@ test.describe(
       await fileTrigger(page).click()
       await page.getByRole("menuitem", { name: f.menu.rename }).click()
       await expect(nameField(page)).toBeFocused()
-      expect(await inert(page, "[data-slot=menu-trigger]")).toBe(true)
+      // The page freezes a paint after the dialog opens.
+      await expect
+        .poll(() => inert(page, "[data-slot=menu-trigger]"))
+        .toBe(true)
     })
 
     test("closing the dialog returns focus to the menu's trigger", async ({
@@ -242,8 +245,9 @@ test.describe("persistent elements", { tag: "@enhancement" }, () => {
   }) => {
     await renameTrigger(page).click()
     await expect(nameField(page)).toBeFocused()
+    // The page freezes a paint after the dialog opens.
+    await expect.poll(() => inert(page, "[data-slot=menu-trigger]")).toBe(true)
     expect(await inert(page, "#chat")).toBe(false)
-    expect(await inert(page, "[data-slot=menu-trigger]")).toBe(true)
     // A backdrop covers it, so it's reached the way a screen reader or a password manager would.
     await chat(page).focus()
     await expect(chat(page)).toBeFocused()

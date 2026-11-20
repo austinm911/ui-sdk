@@ -158,6 +158,8 @@ type Sheet = {
   isInteractiveAt: (point: SnapPoint | null) => boolean
   /** Measures again, like after an option that changes the geometry. */
   refresh: () => void
+  /** A backdrop that bound after the sheet opened: it takes the dim, or joins the motion. */
+  backdropBound: (backdrop: HTMLElement) => void
   destroy: () => void
 }
 
@@ -595,6 +597,14 @@ function attachSheet(el: HTMLElement, input: SheetOptions) {
       isAtOrBelow(resolved, point, options.modalAbove()),
     refresh() {
       relayout(false)
+    },
+    backdropBound(backdrop) {
+      if (destroyed) {
+        return
+      }
+      restoreBackdrop?.()
+      restoreBackdrop = setStyles(backdrop, { "will-change": "opacity" })
+      effects.backdropBound(backdrop)
     },
     destroy() {
       destroyed = true

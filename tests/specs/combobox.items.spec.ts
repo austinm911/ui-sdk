@@ -221,7 +221,7 @@ test.describe("items that arrive while open", () => {
     framework,
   }) => {
     test.skip(
-      !framework.startsWith("react"),
+      !framework.startsWith("react") && framework !== "octane",
       "The ?late fixture is React only."
     )
     await open("combobox", { late: "" })

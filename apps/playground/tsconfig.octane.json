@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src/fixtures/*/octane.tsrx"],
+  "compilerOptions": {
+    "jsxImportSource": "octane",
+    "types": ["vite/client"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "tsrx": {
+    "compiler": "octane/compiler/volar"
+  }
+}
