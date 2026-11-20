@@ -318,7 +318,7 @@ function SelectContent({
         )))
   const element = usePart(select, "content", content, {
     ...props,
-    ref: mergeRefs(ref ?? null, tree.track),
+    ref: mergeRefs<HTMLDivElement>(ref, tree.track),
     children: body,
     render: sheetViewport(select, render),
   })

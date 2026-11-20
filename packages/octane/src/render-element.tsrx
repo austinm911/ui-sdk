@@ -59,18 +59,41 @@ function mergeStyles(earlier: unknown, later: unknown) {
   })
 }
 
+// A ref the props take: a callback, an object, a list of refs, or null.
+type ElementRef<El> = Octane.Ref<El>
+
 const mergedRefs = new WeakMap<
   object,
-  WeakMap<object, (el: unknown) => () => void>
+  WeakMap<object, Octane.RefCallback<never>>
 >()
 
-function setRef(ref: Octane.Ref<unknown>, el: unknown) {
+// Returns the ref's cleanup, if it has one.
+function setRef<El>(ref: ElementRef<El> | undefined, el: El | null): unknown {
   if (typeof ref === "function") {
     return ref(el)
   }
-  if (ref) {
-    ;(ref as { current: unknown }).current = el
+  if (isRefList(ref)) {
+    const cleanups = ref.map((each) => setRef(each, el))
+    return () =>
+      cleanups.forEach((cleanup, index) =>
+        typeof cleanup === "function" ? cleanup() : setRef(ref[index], null)
+      )
   }
+  if (ref) {
+    ref.current = el
+  }
+}
+
+function isRefList<El>(
+  ref: ElementRef<El> | undefined
+): ref is Extract<ElementRef<El>, readonly unknown[]> {
+  return Array.isArray(ref)
+}
+
+// SAFETY: the entry for `a` and `b` was made below from those two refs, which
+// take the same element type, so it takes that type too.
+function cachedRef<El>(merged: Octane.RefCallback<never>) {
+  return merged as Octane.RefCallback<El>
 }
 
 /**
@@ -78,27 +101,29 @@ function setRef(ref: Octane.Ref<unknown>, el: unknown) {
  * Octane runs the cleanup it returns instead of passing null, so each ref's
  * own cleanup runs, and a ref without one gets null.
  */
-function mergeRefs(a: Octane.Ref<unknown>, b: Octane.Ref<unknown>) {
+function mergeRefs<El>(
+  a: ElementRef<El> | null | undefined,
+  b: ElementRef<El> | null | undefined
+): ElementRef<El> | undefined {
   if (!a || !b) {
-    return a ?? b
+    return a ?? b ?? undefined
   }
   let inner = mergedRefs.get(a)
   if (!inner) {
     mergedRefs.set(a, (inner = new WeakMap()))
   }
-  let merged = inner.get(b)
-  if (!merged) {
-    merged = (el: unknown) => {
-      const cleanups = [setRef(a, el), setRef(b, el)]
-      return () =>
-        cleanups.forEach((cleanup, index) =>
-          typeof cleanup === "function"
-            ? cleanup()
-            : setRef(index ? b : a, null)
-        )
-    }
-    inner.set(b, merged)
+  const cached = inner.get(b)
+  if (cached) {
+    return cachedRef<El>(cached)
   }
+  const merged = (el: El | null) => {
+    const cleanups = [setRef(a, el), setRef(b, el)]
+    return () =>
+      cleanups.forEach((cleanup, index) =>
+        typeof cleanup === "function" ? cleanup() : setRef(index ? b : a, null)
+      )
+  }
+  inner.set(b, merged)
   return merged
 }
 
@@ -114,7 +139,9 @@ type RenderProp<State = {}> = (
 
 // Octane compiles template children into a render function. A function a
 // part should call with its state is any other function.
-function isStateFunction(value: unknown): value is (state: never) => unknown {
+function isStateFunction<Value>(
+  value: Value
+): value is Extract<Value, (state: never) => unknown> {
   return typeof value === "function" && !isChildrenBlock(value)
 }
 

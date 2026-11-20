@@ -257,7 +257,7 @@ function MenuContent<Payload = unknown>({
   // The payload's type is the app's, from `Payload`; the part hands its state on as it is.
   const partProps = {
     ...props,
-    ref: nested ? ref : mergeRefs(ref ?? null, tree.track),
+    ref: nested ? ref : mergeRefs<HTMLDivElement>(ref, tree.track),
     render: nested ? render : sheetViewport(menu, render),
   } as PartProps<"div", MenuContentState>
   const element = usePart(menu, "content", content, partProps)

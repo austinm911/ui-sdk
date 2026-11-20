@@ -68,8 +68,7 @@ Then make these changes.
   element props types add `"onInput"` to each component's `Clashing` list
   where React's has `"onChange"`.
 - **Popups.** A popup's content part takes the tree ref through its props:
-  `const tree = usePopupTree()`, pass `ref: mergeRefs(ref ?? null,
-tree.track)` to `usePart`, and return `element && renderPopup(element,
+  `const tree = usePopupTree()`, pass `ref: mergeRefs<HTMLDivElement>(ref, tree.track)` to `usePart`, and return `element && renderPopup(element,
 target, tree)`. See `SelectContent`.
 - **No type arguments on a JSX tag,** like `<Select<string, boolean>>`.
   Prettier's `.tsrx` parser rejects them. Let the props infer the types.
@@ -101,7 +100,8 @@ The compiler reports Strong mode errors with their rule name, like
 node -e 'import("octane/compiler").then(async ({ compile }) => { const f = process.argv[1]; await compile(require("fs").readFileSync(f, "utf8"), f, {}); console.log("ok") })' <file>
 ```
 
-Format it with `npx prettier --write <file>`, which formats `.tsrx` through
+Check types with `pnpm --filter @ui-sdk/octane typecheck`, which runs
+`tsrx-tsc` over the package. Format it with `npx prettier --write <file>`, which formats `.tsrx` through
 `@tsrx/prettier-plugin`. Then run the component's specs on the playground dev server:
 
 ```sh

@@ -381,14 +381,16 @@
     }
   },
   "scripts": {
-    "typecheck": "node ../../scripts/tsgo.mjs --noEmit"
+    "typecheck": "tsrx-tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
     "@ui-sdk/core": "workspace:^",
     "octane": ">=0.18.0"
   },
   "devDependencies": {
+    "@tsrx/typescript-plugin": "0.6.3",
     "@ui-sdk/core": "workspace:*",
-    "octane": "0.18.0"
+    "octane": "0.18.0",
+    "typescript": "5.9.3"
   }
 }

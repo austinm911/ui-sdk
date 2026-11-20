@@ -435,12 +435,18 @@ importers:
 
   packages/octane:
     devDependencies:
+      '@tsrx/typescript-plugin':
+        specifier: 0.6.3
+        version: 0.6.3(octane@0.18.0(@typescript-eslint/types@8.72.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))(typescript@5.9.3)
       '@ui-sdk/core':
         specifier: workspace:*
         version: link:../core
       octane:
         specifier: 0.18.0
         version: 0.18.0(@tsrx/oxc@0.24.0(svelte@5.57.2(@typescript-eslint/types@8.72.1)))(@typescript-eslint/types@8.72.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
   packages/react:
     devDependencies:
@@ -2591,6 +2597,36 @@ packages:
 
   '@tsrx/runtime@0.2.4':
     resolution: {integrity: sha512-rLwKYml/Qbb1D9LtB+NE5bcJDs/SowSKaL+lMR0m6Mr61lKZNuK43IFK+jxFmLvRlG+7ico1kOszMyhA5rObNA==}
+
+  '@tsrx/typescript-plugin@0.6.3':
+    resolution: {integrity: sha512-987H5i0hgHDgClhojw8OtnSj8DC1xOWV6tTlFIQVIjy6OgmQeZCjj/yPkMVoYOJme5bNgOy7aJVoJw8nipv8cQ==}
+    hasBin: true
+    peerDependencies:
+      '@tsrx/content-mapper': 0.1.2
+      '@tsrx/preact': 0.3.5
+      '@tsrx/react': 0.4.5
+      '@tsrx/ripple': ^0.2.0
+      '@tsrx/solid': 0.3.5
+      '@tsrx/vue': 0.3.5
+      octane: '*'
+      typescript: ^5.9.3 || ^6.0.0 || ^7.1.0-dev.20260923.1
+    peerDependenciesMeta:
+      '@tsrx/content-mapper':
+        optional: true
+      '@tsrx/preact':
+        optional: true
+      '@tsrx/react':
+        optional: true
+      '@tsrx/ripple':
+        optional: true
+      '@tsrx/solid':
+        optional: true
+      '@tsrx/vue':
+        optional: true
+      octane:
+        optional: true
+      typescript:
+        optional: true
 
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
@@ -9280,6 +9316,16 @@ snapshots:
       - '@typescript-eslint/types'
 
   '@tsrx/runtime@0.2.4': {}
+
+  '@tsrx/typescript-plugin@0.6.3(octane@0.18.0(@typescript-eslint/types@8.72.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))(typescript@5.9.3)':
+    dependencies:
+      '@volar/language-core': 2.4.28
+      '@volar/typescript': 2.4.28
+      jsonc-parser: 3.3.1
+      resolve-pkg-maps: 1.0.0
+    optionalDependencies:
+      octane: 0.18.0(@tsrx/oxc@0.24.0(svelte@5.57.2(@typescript-eslint/types@8.72.1)))(@typescript-eslint/types@8.72.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)(vite@8.3.3(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
+      typescript: 5.9.3
 
   '@tybys/wasm-util@0.10.4':
     dependencies:
