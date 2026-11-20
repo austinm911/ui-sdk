@@ -1,7 +1,6 @@
-/** @jsxImportSource octane */
 import type { menubar } from "@ui-sdk/core/menubar"
 import * as React from "octane"
-import type { PrimitiveHandle } from "./use-primitive"
+import type { PrimitiveHandle } from "./use-primitive.tsrx"
 
 // The menubar's context, apart from the menubar, so a menu can join one
 // without bundling it.

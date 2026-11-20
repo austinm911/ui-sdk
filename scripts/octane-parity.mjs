@@ -67,7 +67,7 @@ const fixtures = join(root, "apps/playground/src/fixtures")
 const missingFixtures = readdirSync(fixtures).filter(
   (name) =>
     existsSync(join(fixtures, name, "react.tsx")) &&
-    !existsSync(join(fixtures, name, "octane.tsx"))
+    !existsSync(join(fixtures, name, "octane.tsrx"))
 )
 
 const total = [...files.values()].reduce((sum, file) => sum + file.react, 0)
