@@ -652,8 +652,8 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
   // Re-renders the part once its render is outdated. Handed to the part's
   // subscription as each render commits, like the dispatcher a store's
   // subscriber holds. Octane's useSyncExternalStore subscribes in a passive
-  // effect, after paint, and a part that just mounted, like a submenu's
-  // trigger, must re-render for a key pressed before then. Strong mode wants
+  // effect, after paint (octanejs/octane#3095), and a part that just mounted,
+  // like a submenu's trigger, must re-render for a key pressed before then. Strong mode wants
   // state that render reads, and this count is only how often core said the
   // part was outdated, so it's read once, as nothing.
   const [outdatedCount, rerender] = React.useReducer(

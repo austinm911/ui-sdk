@@ -292,7 +292,8 @@ function LeakCollapsible() {
 }
 
 // The panels are a component of their own: a keyed @for written beside
-// <TabsList>, whose children hold a @for too, renders before the list.
+// <TabsList>, whose children hold a @for too, renders before the list
+// (octanejs/octane#3094).
 function LeakTabPanels() @{
   @for (const item of items; key item.value) {
     <TabsPanel className="panel" value={item.value}>

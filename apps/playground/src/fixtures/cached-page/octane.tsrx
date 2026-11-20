@@ -116,7 +116,7 @@ function Fixture() {
   const [page, setPage] = React.useState<"profile" | "other">("profile")
   // Each page goes in as a children prop. Written between the tags, the
   // compiled Activity block reads its holes from a `props` it never declares,
-  // and the fixture throws on mount.
+  // and the fixture throws on mount (octanejs/octane#3093).
   return (
     <div className="fixture">
       <button>{"Before"}</button>

@@ -16,7 +16,8 @@ const controller = createTabsController()
 
 // Each tab's panel, with its field when it has one. A component of its own:
 // a keyed @for written beside <TabsList>, whose children hold a @for too,
-// renders before the list, so Tab from Before lands on a panel.
+// renders before the list, so Tab from Before lands on a panel
+// (octanejs/octane#3094).
 function Panels({ keepMounted }: { keepMounted: boolean }) @{
   @for (const tab of tabsFixture.tabs; key tab.value) {
     <TabsPanel className="panel" value={tab.value} keepMounted={keepMounted}>

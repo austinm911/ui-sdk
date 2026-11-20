@@ -98,7 +98,8 @@ default` fallback. Pass them on as `children={children}`.
   already has. A cast needs a comment that says why it holds.
 
 `use-primitive.tsrx` deviates from Strong mode in one place. Octane runs
-passive effects after paint and subscribes `useSyncExternalStore` in one, but
+passive effects after paint and subscribes `useSyncExternalStore` in one
+(octanejs/octane#3095), but
 core needs a part subscribed at commit, since a submenu that just opened must
 answer a key pressed in the same frame. Each part subscribes in a layout
 effect and re-renders through a reducer, whose count it reads once with
