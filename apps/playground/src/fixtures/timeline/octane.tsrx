@@ -48,9 +48,15 @@ function Fixture() {
         }
       </Timeline>
       <button>{"After"}</button>
-      <button onClick={() => setEvents([f.added, ...events])}>{"Add Event"}</button>
-      <button onClick={() => setEvents([...events].reverse())}>{"Reverse"}</button>
-      <button onClick={() => controller.focus("shipped")}>{"Focus Current"}</button>
+      <button onClick={() => setEvents([f.added, ...events])}>
+        {"Add Event"}
+      </button>
+      <button onClick={() => setEvents([...events].reverse())}>
+        {"Reverse"}
+      </button>
+      <button onClick={() => controller.focus("shipped")}>
+        {"Focus Current"}
+      </button>
       <button onClick={() => setEvents(advance(events))}>{"Advance"}</button>
     </div>
   )

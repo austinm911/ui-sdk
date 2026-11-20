@@ -22,7 +22,9 @@ function Fixture() {
           `gauge ${state.percent >= 80 ? "is-high" : "is-ok"}`
         }
       >
-        <MeterValue>{(state: { text: string }) => `${state.text} used`}</MeterValue>
+        <MeterValue>
+          {(state: { text: string }) => `${state.text} used`}
+        </MeterValue>
         <MeterTrack className="gauge-track">
           <MeterIndicator className="gauge-indicator" />
         </MeterTrack>

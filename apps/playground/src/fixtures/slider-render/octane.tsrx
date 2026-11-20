@@ -39,7 +39,9 @@ function Fixture() {
               className={(state: SliderState) =>
                 `slider-indicator ${state.dragging ? "is-dragging" : "is-idle"}`
               }
-              style={(state: SliderState) => ({ opacity: state.dragging ? 0.5 : 1 })}
+              style={(state: SliderState) => ({
+                opacity: state.dragging ? 0.5 : 1,
+              })}
             />
             <SliderThumb
               className="slider-thumb"

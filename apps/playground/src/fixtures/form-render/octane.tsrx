@@ -17,7 +17,9 @@ function Fixture() {
     <div className="fixture">
       <button>{"Before"}</button>
       <FieldSet className="form">
-        <FieldLegend render={(props) => <div {...props} />}>{"Legend as a div"}</FieldLegend>
+        <FieldLegend render={(props) => <div {...props} />}>
+          {"Legend as a div"}
+        </FieldLegend>
         <Field>
           <FieldLabel>{"Render function"}</FieldLabel>
           <Input

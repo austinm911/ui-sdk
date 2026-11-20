@@ -31,7 +31,9 @@ function Slots({ variant }: { variant: Variant }) @{
   @for (const { group, slots } of groups; key group) {
     <>
       @if (group > 0) {
-        <OTPInputSeparator className={classes.separator}>{"-"}</OTPInputSeparator>
+        <OTPInputSeparator className={classes.separator}>
+          {"-"}
+        </OTPInputSeparator>
       }
       <OTPInputGroup className={classes.group}>
         @for (const slot of slots; key slot) {

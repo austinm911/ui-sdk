@@ -12,7 +12,11 @@ function Fixture() {
   return (
     <div className="fixture">
       <button>{"Before"}</button>
-      <Button className="button" render={span} onClick={() => setAction("span")}>
+      <Button
+        className="button"
+        render={span}
+        onClick={() => setAction("span")}
+      >
         {"Span button"}
       </Button>
       <Button

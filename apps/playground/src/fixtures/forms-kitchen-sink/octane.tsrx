@@ -199,7 +199,9 @@ function Card({
     >
       <FieldLabel>{"Label"}</FieldLabel>
       {control}
-      <FieldDescription className={c.description}>{"Description"}</FieldDescription>
+      <FieldDescription className={c.description}>
+        {"Description"}
+      </FieldDescription>
       <FieldError className={c.error} />
     </Field>
   )

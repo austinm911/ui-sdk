@@ -130,7 +130,9 @@ function VariantCollapsible({ variant, env }: { variant: Variant; env: Env }) {
         <CollapsiblePanel
           className={classes.panel(variant.animation)}
           {...variant.panel}
-          render={variant.render?.panel === "section" ? sectionPanel : undefined}
+          render={
+            variant.render?.panel === "section" ? sectionPanel : undefined
+          }
         >
           <div className={classes.inner}>
             <Body variant={variant} />
@@ -161,9 +163,7 @@ function VariantCollapsible({ variant, env }: { variant: Variant; env: Env }) {
 function mount(root: HTMLElement) {
   // The shell names only the frameworks it links to, so this page shows as React's.
   kitchenSink(root, "octane", (slot, variant, env) =>
-    createRoot(slot).render(
-      <VariantCollapsible variant={variant} env={env} />
-    )
+    createRoot(slot).render(<VariantCollapsible variant={variant} env={env} />)
   )
 }
 

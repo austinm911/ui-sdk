@@ -51,10 +51,7 @@ function Fixture() {
               </MenuSubTrigger>
               <MenuSubContent className="popup">
                 @for (const item of f.file.share.items; key item.value) {
-                  <MenuItem
-                    className="item"
-                    value={item.value}
-                  >
+                  <MenuItem className="item" value={item.value}>
                     {item.label}
                   </MenuItem>
                 }
@@ -106,10 +103,7 @@ function Fixture() {
               onValueChange={(value) => setAction(`profile: ${value}`)}
             >
               @for (const item of f.profiles.items; key item.value) {
-                <MenuRadioItem
-                  className="item"
-                  value={item.value}
-                >
+                <MenuRadioItem className="item" value={item.value}>
                   {item.label}
                 </MenuRadioItem>
               }

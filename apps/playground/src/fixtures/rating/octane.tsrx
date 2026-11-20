@@ -43,7 +43,9 @@ function Fixture() {
         }}
       >
         <RatingItem>
-          {({ fill }: RatingItemState) => <span className="star">{`${fill}`}</span>}
+          {({ fill }: RatingItemState) => (
+            <span className="star">{`${fill}`}</span>
+          )}
         </RatingItem>
       </Rating>
       <button type="button">{"After"}</button>

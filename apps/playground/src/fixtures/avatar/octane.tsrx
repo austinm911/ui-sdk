@@ -55,7 +55,9 @@ function Fixture() {
         {"Change image"}
       </button>
       <button onClick={() => setSrc(undefined)}>{"Remove image"}</button>
-      <button onClick={() => setMounts((count) => count + 1)}>{"Remount"}</button>
+      <button onClick={() => setMounts((count) => count + 1)}>
+        {"Remount"}
+      </button>
       <button>{"After"}</button>
       <output role="status" aria-label="Last action">
         {action}

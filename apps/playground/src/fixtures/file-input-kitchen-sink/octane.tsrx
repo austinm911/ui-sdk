@@ -75,7 +75,9 @@ function Card({
           }
         </FileInputDropzone>
       } @else if (variant.trigger) {
-        <FileInputTrigger className={c.button}>{"Choose files"}</FileInputTrigger>
+        <FileInputTrigger className={c.button}>
+          {"Choose files"}
+        </FileInputTrigger>
       }
       @if (variant.list) {
         <FileInputList className={c.list} aria-label="Files">

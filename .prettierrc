@@ -5,15 +5,10 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "printWidth": 80,
-  "plugins": [
-    "@tsrx/prettier-plugin",
-    "prettier-plugin-svelte"
-  ],
+  "plugins": ["@tsrx/prettier-plugin", "prettier-plugin-svelte"],
   "overrides": [
     {
-      "files": [
-        "*.tsrx"
-      ],
+      "files": ["*.tsrx"],
       "options": {
         "parser": "tsrx"
       }

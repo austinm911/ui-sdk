@@ -134,7 +134,9 @@ function VariantPasswordInput({
 
 function mount(root: HTMLElement) {
   kitchenSink(root, "octane", (slot, variant, env) =>
-    createRoot(slot).render(<VariantPasswordInput variant={variant} env={env} />)
+    createRoot(slot).render(
+      <VariantPasswordInput variant={variant} env={env} />
+    )
   )
 }
 

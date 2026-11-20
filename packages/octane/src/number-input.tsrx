@@ -7,7 +7,10 @@ import {
 } from "@ui-sdk/core/number-input"
 import * as React from "octane"
 import { createPortal } from "octane"
-import { useControllerEntry, useControllerTarget } from "./controller-target.tsrx"
+import {
+  useControllerEntry,
+  useControllerTarget,
+} from "./controller-target.tsrx"
 import { useFieldControl, useFieldControlId } from "./field-context.tsrx"
 import { isStateFunction } from "./render-element.tsrx"
 import {
@@ -144,7 +147,12 @@ function NumberInputControl({
     const { value, ...rest }: Record<string, any> = field
       ? field.props(input)
       : input
-    return renderElement("input", { ...rest, defaultValue: value }, render, state)
+    return renderElement(
+      "input",
+      { ...rest, defaultValue: value },
+      render,
+      state
+    )
   }
   return usePart(
     numberInput,

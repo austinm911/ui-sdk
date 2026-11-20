@@ -81,20 +81,16 @@ function Waterfall({
     controller,
     debug,
   })
-  const content =
-    children ??
+  const content = children ?? (
     <WaterfallRows
       items={readIn(waterfall, () => waterfall.api.internal.all())}
     />
+  )
   return usePart(waterfall, "root", {}, { ...props, children: content })
 }
 
 // A row for every span, for a waterfall without children.
-function WaterfallRows({
-  items,
-}: {
-  items: WaterfallDataItem[]
-}) @{
+function WaterfallRows({ items }: { items: WaterfallDataItem[] }) @{
   @for (const item of items; key item.value) {
     <WaterfallRow value={item.value}>
       <WaterfallRowHeader>
@@ -132,7 +128,9 @@ function WaterfallAxis({
   return <Axis {...props} children={children} />
 }
 
-const ticks = (state: WaterfallAxisState) => <WaterfallTicks ticks={state.ticks} />
+const ticks = (state: WaterfallAxisState) => (
+  <WaterfallTicks ticks={state.ticks} />
+)
 
 function WaterfallTicks({ ticks }: { ticks: WaterfallAxisState["ticks"] }) @{
   @for (const tick of ticks; key tick.time) {

@@ -61,7 +61,9 @@ function Fixture() {
         <button type="submit">{f.form.submit}</button>
         <button type="reset">{f.form.reset}</button>
       </form>
-      <button onClick={() => controller.setValue(f.filled)}>{"Set date"}</button>
+      <button onClick={() => controller.setValue(f.filled)}>
+        {"Set date"}
+      </button>
       <button onClick={() => controller.clear()}>{"Clear date"}</button>
       <button>{"After"}</button>
       <output role="status" aria-label="Last action">

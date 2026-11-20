@@ -38,7 +38,13 @@ function Fixture() {
         aria-label={form.label}
         onSubmit={(event: SubmitEvent) => {
           event.preventDefault()
-          setSubmitted(String(new FormData(event.currentTarget as HTMLFormElement).get(code.name)))
+          setSubmitted(
+            String(
+              new FormData(event.currentTarget as HTMLFormElement).get(
+                code.name
+              )
+            )
+          )
         }}
       >
         <OTPInput

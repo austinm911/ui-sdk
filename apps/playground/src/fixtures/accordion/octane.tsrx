@@ -73,7 +73,9 @@ function Fixture() {
         {action}
       </output>
       <output aria-label="Last completed">{complete}</output>
-      <button onClick={() => controller.open("support")}>{"Show support"}</button>
+      <button onClick={() => controller.open("support")}>
+        {"Show support"}
+      </button>
       <button onClick={() => setWarrantyEnabled((enabled) => !enabled)}>
         {"Toggle warranty"}
       </button>

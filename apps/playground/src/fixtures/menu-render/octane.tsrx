@@ -21,7 +21,11 @@ function Fixture() {
       <Menu onAction={setAction}>
         <MenuTrigger>{"File"}</MenuTrigger>
         <MenuContent className="popup">
-          <MenuItem className="item" value="docs" render={(props) => <a {...props} href="#docs" />}>
+          <MenuItem
+            className="item"
+            value="docs"
+            render={(props) => <a {...props} href="#docs" />}
+          >
             {"Docs"}
           </MenuItem>
           <MenuItem

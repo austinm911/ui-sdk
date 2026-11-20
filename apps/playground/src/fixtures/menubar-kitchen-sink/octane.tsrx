@@ -26,10 +26,7 @@ import {
   type MenuDataItem,
 } from "@ui-sdk/octane/menu"
 import { Input } from "@ui-sdk/octane/input"
-import {
-  NumberInput,
-  NumberInputControl,
-} from "@ui-sdk/octane/number-input"
+import { NumberInput, NumberInputControl } from "@ui-sdk/octane/number-input"
 import {
   Select,
   SelectContent,

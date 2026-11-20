@@ -24,18 +24,20 @@ function Group({
   onLayout?: (layout: number[]) => void
 } & Partial<Parameters<typeof Resizable>[0]>) {
   // Each panel with the handle before it, which the first has none of.
-  const rows = group.panels.map(({ label, nested: inner, ...sizes }, index) => ({
-    label,
-    inner,
-    sizes,
-    handle:
-      index > 0
-        ? {
-            label: `Resize ${group.panels[index - 1].label}`,
-            disabled: isHandleDisabled(group, index - 1),
-          }
-        : undefined,
-  }))
+  const rows = group.panels.map(
+    ({ label, nested: inner, ...sizes }, index) => ({
+      label,
+      inner,
+      sizes,
+      handle:
+        index > 0
+          ? {
+              label: `Resize ${group.panels[index - 1].label}`,
+              disabled: isHandleDisabled(group, index - 1),
+            }
+          : undefined,
+    })
+  )
   return (
     <Resizable
       className={nested ? c.nested : c.group}
@@ -72,7 +74,13 @@ function Group({
 }
 
 // Where the group sits.
-function Place({ place, children }: { place: Variant["place"]; children?: unknown }) @{
+function Place({
+  place,
+  children,
+}: {
+  place: Variant["place"]
+  children?: unknown
+}) @{
   @if (place === "rtl") {
     <div dir="rtl">{children}</div>
   } @else if (place === "transformed") {

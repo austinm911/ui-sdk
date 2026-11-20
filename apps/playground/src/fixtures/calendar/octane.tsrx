@@ -29,7 +29,10 @@ function Fixture() {
     defaultMonth ?? calendarFixture.today.slice(0, 7)
   )
   const f = calendarFixture
-  const offsets = Array.from({ length: options.months ?? 1 }, (_, offset) => offset)
+  const offsets = Array.from(
+    { length: options.months ?? 1 },
+    (_, offset) => offset
+  )
   return (
     <div className="fixture" lang={lang}>
       <button>{"Before"}</button>

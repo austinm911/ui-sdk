@@ -172,7 +172,9 @@ function VariantAccordion({ variant, env }: { variant: Variant; env: Env }) {
                     ? (props, state) => (
                         <button {...props}>
                           {item.label}
-                          <span className={classes.index}>{`#${state.index}`}</span>
+                          <span
+                            className={classes.index}
+                          >{`#${state.index}`}</span>
                           <span aria-hidden className={classes.chevron}>
                             {"▾"}
                           </span>

@@ -1,9 +1,6 @@
 "use strong"
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@ui-sdk/octane/menu"
-import {
-  NumberInput,
-  NumberInputControl,
-} from "@ui-sdk/octane/number-input"
+import { NumberInput, NumberInputControl } from "@ui-sdk/octane/number-input"
 import { Toggle, ToggleGroup } from "@ui-sdk/octane/toggle"
 import {
   Toolbar,

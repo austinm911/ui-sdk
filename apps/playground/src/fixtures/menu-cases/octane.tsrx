@@ -23,8 +23,9 @@ function Fixture() {
   const [open, setOpen] = React.useState(false)
   // Specs close the controlled menu from outside it.
   React.useEffect(() => {
-    ;(window as unknown as { __closeControlled: () => void }).__closeControlled =
-      () => setOpen(false)
+    ;(
+      window as unknown as { __closeControlled: () => void }
+    ).__closeControlled = () => setOpen(false)
   })
   return (
     <div className="fixture">

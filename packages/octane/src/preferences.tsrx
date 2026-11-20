@@ -39,8 +39,9 @@ function idOf(preference: PreferenceLike) {
 // resubscribe each render. Linked state follows the list's key, since Strong
 // mode reads no ref in render.
 function useStable(preferences: readonly PreferenceLike[]) {
-  const [list] = React.useLinkedState(preferences.map(idOf).join(" "), () =>
-    preferences
+  const [list] = React.useLinkedState(
+    preferences.map(idOf).join(" "),
+    () => preferences
   )
   return list
 }

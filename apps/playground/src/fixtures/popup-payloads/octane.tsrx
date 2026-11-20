@@ -43,9 +43,7 @@ function Fixture() {
       <button>{"Before"}</button>
       <Menu {...report("menu")}>
         @for (const label of fixture.menu.triggers; key label) {
-          <MenuTrigger payload={payloadOf(label)}>
-            {label}
-          </MenuTrigger>
+          <MenuTrigger payload={payloadOf(label)}>{label}</MenuTrigger>
         }
         <MenuContent className="popup">
           {(state: { payload: unknown }) => (
@@ -60,9 +58,7 @@ function Fixture() {
       </Menu>
       <Popover controller={people} {...report("popover")}>
         @for (const label of fixture.popover.triggers; key label) {
-          <PopoverTrigger payload={payloadOf(label)}>
-            {label}
-          </PopoverTrigger>
+          <PopoverTrigger payload={payloadOf(label)}>{label}</PopoverTrigger>
         }
         <PopoverContent className="popup">
           {(state: { payload: unknown }) => (
@@ -81,9 +77,7 @@ function Fixture() {
       </Popover>
       <Dialog modal={false} {...report("dialog")}>
         @for (const label of fixture.dialog.triggers; key label) {
-          <DialogTrigger payload={payloadOf(label)}>
-            {label}
-          </DialogTrigger>
+          <DialogTrigger payload={payloadOf(label)}>{label}</DialogTrigger>
         }
         <DialogContent className="dialog">
           {(state: { payload: unknown }) => contentFor(state.payload)}
@@ -91,9 +85,7 @@ function Fixture() {
       </Dialog>
       <Drawer modal={false} {...report("drawer")}>
         @for (const label of fixture.drawer.triggers; key label) {
-          <DrawerTrigger payload={payloadOf(label)}>
-            {label}
-          </DrawerTrigger>
+          <DrawerTrigger payload={payloadOf(label)}>{label}</DrawerTrigger>
         }
         <DrawerContent className="drawer">
           {(state: { payload: unknown }) => contentFor(state.payload)}

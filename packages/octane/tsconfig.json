@@ -5,9 +5,7 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "tsrx": {
     "compiler": "octane/compiler/volar"
   }

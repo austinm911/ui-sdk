@@ -56,13 +56,7 @@ function entryKey(entry: Exclude<Entry, string>) {
 
 // SelectItem, SelectGroup and SelectSeparator parts for a list: the variant's own, or what a data
 // select shows.
-function Items({
-  list,
-  variant,
-}: {
-  list: ListData<any>
-  variant: Variant
-}) @{
+function Items({ list, variant }: { list: ListData<any>; variant: Variant }) @{
   const rows = list.flatMap((entry) =>
     typeof entry === "string" ? [] : [{ entry, key: entryKey(entry) }]
   )
@@ -116,6 +110,10 @@ function ItemEntry({
   )
 }
 
+// Variants mix value types and single or multiple selection. Prettier's tsrx
+// parser can't read type arguments on a JSX tag, so this instantiation names them.
+const AnySelect = Select<any, boolean>
+
 function VariantSelect({ variant, env }: { variant: Variant; env: Env }) {
   const initial =
     defaultValueOf(variant) ?? (variant.options?.multiple ? [] : null)
@@ -127,7 +125,7 @@ function VariantSelect({ variant, env }: { variant: Variant; env: Env }) {
   const selectAll = variant.selectAll && variant.list !== "grouped"
   return (
     <>
-      <Select<any, boolean>
+      <AnySelect
         {...options}
         {...(variant.list === "countries" && countryOptions)}
         {...(variant.controlled === "value"
@@ -194,7 +192,10 @@ function VariantSelect({ variant, env }: { variant: Variant; env: Env }) {
             @if (data) {
               <SelectList>
                 {(state: { items: unknown }) => (
-                  <Items list={state.items as ListData<any>} variant={variant} />
+                  <Items
+                    list={state.items as ListData<any>}
+                    variant={variant}
+                  />
                 )}
               </SelectList>
             } @else {
@@ -235,7 +236,7 @@ function VariantSelect({ variant, env }: { variant: Variant; env: Env }) {
             <Items list={list} variant={variant} />
           </SelectContent>
         }
-      </Select>
+      </AnySelect>
       @if (variant.controlled === "value") {
         <>
           <span className="text-xs text-neutral-600">

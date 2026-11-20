@@ -86,7 +86,10 @@ function Fixture() {
               }}
             />
             <FieldDescription>{f.username.description}</FieldDescription>
-            <FieldError className="field-error" children={error(f.username.name)} />
+            <FieldError
+              className="field-error"
+              children={error(f.username.name)}
+            />
           </Field>
           <Field name={f.bio.name} invalid={invalidOf(errors, f.bio.name)}>
             <FieldLabel className="label">{f.bio.label}</FieldLabel>
@@ -111,7 +114,10 @@ function Fixture() {
                 setErrors((current) => without(current, f.email.name))
               }
             />
-            <FieldError className="field-error" children={error(f.email.name)} />
+            <FieldError
+              className="field-error"
+              children={error(f.email.name)}
+            />
           </Field>
           <Field name={f.website.name}>
             <FieldLabel className="label">{f.website.label}</FieldLabel>

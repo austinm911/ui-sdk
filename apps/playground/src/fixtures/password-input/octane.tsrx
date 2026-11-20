@@ -17,9 +17,8 @@ import {
 const reveal = createPasswordInputController()
 
 function Fixture() {
-  const { controlled, cancel, ...options } = React.useInitialValue(
-    passwordInputOptions
-  )
+  const { controlled, cancel, ...options } =
+    React.useInitialValue(passwordInputOptions)
   const [action, setAction] = React.useState("")
   const [visible, setVisible] = React.useState(!!options.defaultVisible)
   const { form, email, password } = passwordInputFixture
@@ -31,9 +30,9 @@ function Fixture() {
         className="password-form"
         onSubmit={(event: SubmitEvent) => {
           event.preventDefault()
-          const field = (event.currentTarget as HTMLFormElement).elements.namedItem(
-            password.name
-          ) as HTMLInputElement
+          const field = (
+            event.currentTarget as HTMLFormElement
+          ).elements.namedItem(password.name) as HTMLInputElement
           setAction(passwordInputAction.submit(field.type))
         }}
       >

@@ -26,8 +26,11 @@ const spans = flatWaterfall(waterfallFixture.items)
 
 function Fixture() {
   const [action, setAction] = React.useState("")
-  const { cancel, range: startRange, ...options } =
-    React.useInitialValue(waterfallOptions)
+  const {
+    cancel,
+    range: startRange,
+    ...options
+  } = React.useInitialValue(waterfallOptions)
   const [range, setRange] = React.useState(startRange)
   return (
     <div className="fixture">
@@ -81,7 +84,9 @@ function Fixture() {
       </output>
       <button onClick={() => controller.expandAll()}>{"Expand all"}</button>
       <button onClick={() => controller.collapseAll()}>{"Collapse all"}</button>
-      <button onClick={() => controller.reveal("flags")}>{"Reveal flags"}</button>
+      <button onClick={() => controller.reveal("flags")}>
+        {"Reveal flags"}
+      </button>
       <button onClick={() => setRange([500, 1000])}>{"Zoom"}</button>
     </div>
   )
