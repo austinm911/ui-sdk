@@ -7,10 +7,12 @@ import * as React from "octane"
 
 const PlacedContext = React.createContext<(() => () => void) | null>(null)
 
-// How many content parts are placed. A store, so a part mounting re-renders
-// its root through useSyncExternalStore, not a state update from an effect.
+// How many content parts are placed, and whether the root committed. A store,
+// so a part mounting re-renders its root through useSyncExternalStore, not a
+// state update from an effect.
 function placedStore() {
   let count = 0
+  let committed = false
   const listeners = new Set<() => void>()
   const notify = () => listeners.forEach((listener) => listener())
   return {
@@ -20,7 +22,14 @@ function placedStore() {
         listeners.delete(listener)
       }
     },
-    count: () => count,
+    // Whether the root renders its own content part.
+    renderOwn: () => committed && count === 0,
+    commit() {
+      if (!committed) {
+        committed = true
+        notify()
+      }
+    },
     register() {
       count++
       notify()
@@ -34,15 +43,17 @@ function placedStore() {
 
 /**
  * For a root that renders its own content part when the app places none:
- * whether one is placed, and the value of the provider its children go in.
- * Its own part goes in `<Placed value={null}>`, so it doesn't count. `wanted`
- * is whether the root would render its own part now. Only then do placed
- * parts register, so a root with no items to show renders once.
+ * whether to render it, and the value of the provider its children go in.
+ * Its own part goes in `<Placed value={null}>`, so it doesn't count. Placed
+ * parts register as they mount, after the root renders, so the root renders
+ * its own only once it committed and none registered. Otherwise both would
+ * be in the page for a commit.
  */
-function usePlacedContent(wanted: boolean) {
+function usePlacedContent() {
   const store = React.useInitialValue(placedStore)
-  const count = React.useSyncExternalStore(store.subscribe, store.count)
-  return [count > 0, wanted ? store.register : null] as const
+  React.useLayoutEffect(() => store.commit())
+  const renderOwn = React.useSyncExternalStore(store.subscribe, store.renderOwn)
+  return [renderOwn, store.register] as const
 }
 
 const Placed = PlacedContext

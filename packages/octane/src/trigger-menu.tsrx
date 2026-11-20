@@ -78,13 +78,13 @@ function TriggerMenu<T = string>({
   useControllerEntry(options.controller, menu)
   // A data menu renders its list, unless the app placed a
   // TriggerMenuContent, which says so as it mounts.
-  const [placed, place] = usePlacedContent(true)
+  const [renderOwn, place] = usePlacedContent()
   return (
     <HandleScope handle={menu}>
       <ContainerContext value={container}>
         <Placed value={place}>{children}</Placed>
         <Placed value={null}>
-          @if (!placed) {
+          @if (renderOwn) {
             <TriggerMenuContent />
           }
         </Placed>

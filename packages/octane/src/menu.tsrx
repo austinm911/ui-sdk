@@ -116,7 +116,7 @@ function Menu({ children, items, container, ...options }: MenuProps) {
   useControllerEntry(options.controller, menu)
   // A data menu renders its content, unless the app placed a MenuContent,
   // which says so as it mounts.
-  const [placed, place] = usePlacedContent(!!items)
+  const [renderOwn, place] = usePlacedContent()
   // A menu inside this one's content is no item of the menubar.
   return (
     <HandleScope handle={menu}>
@@ -125,7 +125,7 @@ function Menu({ children, items, container, ...options }: MenuProps) {
           <Placed value={place}>{children}</Placed>
         </MenubarContext>
         <Placed value={null}>
-          @if (items && !placed) {
+          @if (items && renderOwn) {
             <MenuContent>
               <MenuItems items={items} />
             </MenuContent>

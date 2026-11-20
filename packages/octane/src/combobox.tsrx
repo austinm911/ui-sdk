@@ -131,17 +131,14 @@ function Combobox<T = string, Multiple extends boolean | undefined = false>({
   )
   // A data combobox renders its list, unless the app placed a ComboboxContent,
   // which says so as it mounts.
-  // Placed parts register even before there are items: items that arrive
-  // later, like from a fetch, would otherwise render a second content for
-  // the commit before the placed one registers.
-  const [placed, place] = usePlacedContent(true)
+  const [renderOwn, place] = usePlacedContent()
   return (
     <HandleScope handle={combobox}>
       <ContainerContext value={container}>
         <SheetHeaderContext value={header}>
           <Placed value={place}>{children}</Placed>
           <Placed value={null}>
-            @if (options.items && !placed) {
+            @if (options.items && renderOwn) {
               <ComboboxContent />
             }
           </Placed>

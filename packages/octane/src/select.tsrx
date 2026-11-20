@@ -115,13 +115,13 @@ function Select<T = string, Multiple extends boolean | undefined = false>({
   })
   // A data select renders its list, unless the app placed a SelectContent,
   // which says so as it mounts.
-  const [placed, place] = usePlacedContent(!!options.items)
+  const [renderOwn, place] = usePlacedContent()
   return (
     <HandleScope handle={select}>
       <ContainerContext value={container}>
         <Placed value={place}>{children}</Placed>
         <Placed value={null}>
-          @if (options.items && !placed) {
+          @if (options.items && renderOwn) {
             <SelectContent />
           }
         </Placed>

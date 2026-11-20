@@ -109,13 +109,7 @@ function Command({
   useControllerEntry(controller, command)
   // A data command renders its list, unless the app placed a CommandList,
   // which says so as it mounts.
-  // Placed parts register even before there are items, so items that arrive
-  // later never render a second list for the commit before it registers.
-  const [placed, place] = usePlacedContent(!isStateFunction(children))
-  // A list is always in the page, so the command renders its own only once
-  // its children had their first commit to say they placed one. Otherwise
-  // both lists would mount in that commit.
-  const mounted = useMounted()
+  const [renderOwn, place] = usePlacedContent()
   const content = (state: CommandState) =>
     isStateFunction(children) ? (
       <Placed value={place}>{children(state)}</Placed>
@@ -123,40 +117,13 @@ function Command({
       <>
         <Placed value={place}>{children}</Placed>
         <Placed value={null}>
-          @if (items && mounted && !placed) {
+          @if (items && renderOwn) {
             <CommandList />
           }
         </Placed>
       </>
     )
   return usePart(command, "root", {}, { ...props, children: content })
-}
-
-// Whether the component committed once. A store, so its first commit
-// re-renders it through useSyncExternalStore, not a state update from an effect.
-function mountedStore() {
-  const listeners = new Set<() => void>()
-  const store = {
-    mounted: false,
-    subscribe(listener: () => void) {
-      listeners.add(listener)
-      return () => {
-        listeners.delete(listener)
-      }
-    },
-    get: () => store.mounted,
-    mount() {
-      store.mounted = true
-      listeners.forEach((listener) => listener())
-    },
-  }
-  return store
-}
-
-function useMounted() {
-  const store = React.useInitialValue(mountedStore)
-  React.useLayoutEffect(() => store.mount())
-  return React.useSyncExternalStore(store.subscribe, store.get)
 }
 
 /**
