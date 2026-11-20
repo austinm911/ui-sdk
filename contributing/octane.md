@@ -82,6 +82,10 @@ props.value)`, since `useState(props.value)` is rejected. A remount is
 - **Children as a prop.** Children written inside a part's tags reach it as a
   render function, which hides a state function and defeats a `children ??
 default` fallback. Pass them on as `children={children}`.
+  A child expression that holds a function, like `{error(name)}`, is
+  wrapped as a children block too, so pass it as a `children={...}` prop.
+- **Rows** that React builds with `.map` become a small component rendered
+  by a keyed `@for`.
 - **Types.** Content is `unknown`, not `React.ReactNode`, and a component
   returns what its JSX returns. Never use `any` beyond what the React file
   already has. A cast needs a comment that says why it holds.
