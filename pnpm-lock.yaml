@@ -68,6 +68,9 @@ importers:
       '@changesets/cli':
         specifier: ^3.0.3
         version: 3.0.3
+      '@tsrx/prettier-plugin':
+        specifier: 0.6.3
+        version: 0.6.3(@typescript-eslint/types@8.72.1)(prettier@3.9.9)
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
@@ -2580,6 +2583,11 @@ packages:
     resolution: {integrity: sha512-P+E1qvimUW1DdoQE8uHyZ44U2xVDugYkDn3xsTnbw7eYP/tTrHuFGLIjKZr5tSw7wPvj4deMO9BKmGtbMAFdpg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
+
+  '@tsrx/prettier-plugin@0.6.3':
+    resolution: {integrity: sha512-9xlyZwErBhytMmTGFkFG2b8EFUvJ7ch2fXOusI+/p8/lvJTTp3bMVLUjj2a0iVVmefp2mKOm7cC9Ek7tcqcaeQ==}
+    peerDependencies:
+      prettier: '>=3.6.0'
 
   '@tsrx/runtime@0.2.4':
     resolution: {integrity: sha512-rLwKYml/Qbb1D9LtB+NE5bcJDs/SowSKaL+lMR0m6Mr61lKZNuK43IFK+jxFmLvRlG+7ico1kOszMyhA5rObNA==}
@@ -9263,6 +9271,13 @@ snapshots:
     transitivePeerDependencies:
       - svelte
       - vite-plus
+
+  '@tsrx/prettier-plugin@0.6.3(@typescript-eslint/types@8.72.1)(prettier@3.9.9)':
+    dependencies:
+      '@tsrx/core': 0.5.5(@typescript-eslint/types@8.72.1)
+      prettier: 3.9.9
+    transitivePeerDependencies:
+      - '@typescript-eslint/types'
 
   '@tsrx/runtime@0.2.4': {}
 

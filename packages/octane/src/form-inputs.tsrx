@@ -14,10 +14,13 @@ function FormInputs({ handle }: { handle: PrimitiveHandle<any> }) {
     <>
       <textarea {...input} defaultValue={value} />
       @if (handle.state.multiple) {
-        @for (const key of readIn(
-          handle,
-          () => handle.api.internal.serialized() as string[]
-        ); key key) {
+        @for (
+          const key of readIn(
+            handle,
+            () => handle.api.internal.serialized() as string[]
+          );
+          key key
+        ) {
           <HiddenInput handle={handle} value={key} />
         }
       }

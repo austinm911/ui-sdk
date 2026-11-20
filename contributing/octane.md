@@ -69,8 +69,10 @@ Then make these changes.
   where React's has `"onChange"`.
 - **Popups.** A popup's content part takes the tree ref through its props:
   `const tree = usePopupTree()`, pass `ref: mergeRefs(ref ?? null,
-  tree.track)` to `usePart`, and return `element && renderPopup(element,
-  target, tree)`. See `SelectContent`.
+tree.track)` to `usePart`, and return `element && renderPopup(element,
+target, tree)`. See `SelectContent`.
+- **No type arguments on a JSX tag,** like `<Select<string, boolean>>`.
+  Prettier's `.tsrx` parser rejects them. Let the props infer the types.
 - **Types.** Content is `unknown`, not `React.ReactNode`, and a component
   returns what its JSX returns. Never use `any` beyond what the React file
   already has. A cast needs a comment that says why it holds.
@@ -99,7 +101,8 @@ The compiler reports Strong mode errors with their rule name, like
 node -e 'import("octane/compiler").then(async ({ compile }) => { const f = process.argv[1]; await compile(require("fs").readFileSync(f, "utf8"), f, {}); console.log("ok") })' <file>
 ```
 
-Then run the component's specs on the playground dev server:
+Format it with `npx prettier --write <file>`, which formats `.tsrx` through
+`@tsrx/prettier-plugin`. Then run the component's specs on the playground dev server:
 
 ```sh
 cd tests && PLAYGROUND_PORT=<port> npx playwright test specs/<name> --project octane

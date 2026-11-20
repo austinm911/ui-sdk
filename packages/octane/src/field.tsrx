@@ -100,9 +100,7 @@ function Field({
   ...props
 }: FieldOptions & PartProps<"div", FieldState>) {
   const field = usePrimitive(fieldPrimitive, { name, disabled, invalid, debug })
-  const context = React.useMemo(() =>
-    extendHandle(field, { name, disabled })
-  )
+  const context = React.useMemo(() => extendHandle(field, { name, disabled }))
   const element = usePart(field, "root", {}, props, "div")
   return (
     <FieldContext value={context}>

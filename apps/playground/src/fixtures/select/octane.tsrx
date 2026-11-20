@@ -109,20 +109,20 @@ function Items({
   } @else {
     @for (const group of f.groups; key group.label) {
       <>
-      @if (group !== f.groups[0]) {
-        <SelectSeparator className="separator" />
-      }
-      <SelectGroup>
-        <SelectGroupLabel className="label">{group.label}</SelectGroupLabel>
-        @if (selectAll) {
-          <SelectSelectAll className="item">
-            {`${f.selectAll} ${group.label}`}
-          </SelectSelectAll>
+        @if (group !== f.groups[0]) {
+          <SelectSeparator className="separator" />
         }
-        @for (const item of group.items; key item.value) {
-          <Item {...item} />
-        }
-      </SelectGroup>
+        <SelectGroup>
+          <SelectGroupLabel className="label">{group.label}</SelectGroupLabel>
+          @if (selectAll) {
+            <SelectSelectAll className="item">
+              {`${f.selectAll} ${group.label}`}
+            </SelectSelectAll>
+          }
+          @for (const item of group.items; key item.value) {
+            <Item {...item} />
+          }
+        </SelectGroup>
       </>
     }
   }
@@ -177,7 +177,10 @@ function Fixture({ data = false }: { data?: boolean }) {
       : list
   const fromData = data || long || recent
   const trigger = (
-    <SelectTrigger className="trigger" controller={field ? controller : undefined}>
+    <SelectTrigger
+      className="trigger"
+      controller={field ? controller : undefined}
+    >
       <SelectValue className="value" maxLabels={max} />
       <span aria-hidden="true">{"▾"}</span>
     </SelectTrigger>
@@ -200,7 +203,7 @@ function Fixture({ data = false }: { data?: boolean }) {
               {trigger}
             </Field>
           }
-          <Select<string, boolean>
+          <Select
             {...options}
             name={f.name}
             placeholder={f.placeholder}
@@ -244,7 +247,11 @@ function Fixture({ data = false }: { data?: boolean }) {
                       @if (fromData) {
                         <DataItems items={state.items as ListData} />
                       } @else {
-                        <Items list={list} grouped={grouped} selectAll={selectAll} />
+                        <Items
+                          list={list}
+                          grouped={grouped}
+                          selectAll={selectAll}
+                        />
                       }
                     </>
                   )}
@@ -269,7 +276,9 @@ function Fixture({ data = false }: { data?: boolean }) {
                 alignItemWithTrigger={align}
               >
                 @if (selectAll && !grouped) {
-                  <SelectSelectAll className="item">{f.selectAll}</SelectSelectAll>
+                  <SelectSelectAll className="item">
+                    {f.selectAll}
+                  </SelectSelectAll>
                 }
                 <Items list={list} grouped={grouped} selectAll={selectAll} />
               </SelectContent>
@@ -286,13 +295,21 @@ function Fixture({ data = false }: { data?: boolean }) {
       <output role="status" aria-label="Submitted">
         {submitted}
       </output>
-      <button onClick={() => controller.open()}>{"Open with controller"}</button>
+      <button onClick={() => controller.open()}>
+        {"Open with controller"}
+      </button>
     </div>
   )
 }
 
 // A disabled fieldset around the control, with ?fieldset.
-function Wrap({ fieldset, children }: { fieldset: boolean; children?: unknown }) @{
+function Wrap({
+  fieldset,
+  children,
+}: {
+  fieldset: boolean
+  children?: unknown
+}) @{
   @if (fieldset) {
     <fieldset disabled>{children}</fieldset>
   } @else {

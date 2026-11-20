@@ -713,54 +713,52 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
   // whose render may have read state older than what core last wrote, and
   // `props` compares them though the state didn't change, after another
   // part's props did.
-  const check = React.useCallback(
-    (full: boolean, props = false) => {
-      const shown = last.current
-      const outdated = readIn(
-        shown.handle,
-        (now) => {
-          if (shown.read.size) {
-            const next = partState(
-              part,
-              shown.props,
-              now
-            ) as typeof shown.snapshot
-            for (const key of shown.read) {
-              if (sameSlotState(next[key], shown.snapshot[key])) {
-                continue
-              }
-              shown.snapshot = next
-              return true
+  const check = React.useCallback((full: boolean, props = false) => {
+    const shown = last.current
+    const outdated = readIn(
+      shown.handle,
+      (now) => {
+        if (shown.read.size) {
+          const next = partState(
+            part,
+            shown.props,
+            now
+          ) as typeof shown.snapshot
+          for (const key of shown.read) {
+            if (sameSlotState(next[key], shown.snapshot[key])) {
+              continue
             }
-          }
-          // Presence may read live state, which changes no version, so it is
-          // checked on every change.
-          const shows = present(part, shown.props, now)
-          if (shows !== shown.present) {
+            shown.snapshot = next
             return true
           }
-          if (renderVersion(instance) === shown.version && !props) {
-            return false
-          }
-          shown.version = renderVersion(instance)
-          // A part that isn't in the page has no attributes to keep current,
-          // like a closed popup's content learning its trigger's id.
-          return (
-            shows &&
-            !sameAttrs(
-              attrs(part, shown.props, now),
-              shown.attrs,
-              full ? undefined : directNames(part)
-            )
+        }
+        // Presence may read live state, which changes no version, so it is
+        // checked on every change.
+        const shows = present(part, shown.props, now)
+        if (shows !== shown.present) {
+          return true
+        }
+        if (renderVersion(instance) === shown.version && !props) {
+          return false
+        }
+        shown.version = renderVersion(instance)
+        // A part that isn't in the page has no attributes to keep current,
+        // like a closed popup's content learning its trigger's id.
+        return (
+          shows &&
+          !sameAttrs(
+            attrs(part, shown.props, now),
+            shown.attrs,
+            full ? undefined : directNames(part)
           )
-        },
-        shown.around
-      )
-      if (outdated) {
-        renderer.current.rerender?.()
-      }
+        )
+      },
+      shown.around
+    )
+    if (outdated) {
+      renderer.current.rerender?.()
     }
-  )
+  })
 
   React.useLayoutEffect(() => {
     renderer.current.rerender = rerender
@@ -810,7 +808,6 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
       unsubscribe()
     }
   })
-
 
   return state as StateOf<P, S>
 }

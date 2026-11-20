@@ -356,11 +356,7 @@ function SelectEmpty({
   ...props
 }: PartProps<"div", SelectEmptyState>) {
   const content = (state: SelectEmptyState) =>
-    isStateFunction(children)
-      ? children(state)
-      : state.empty
-        ? children
-        : null
+    isStateFunction(children) ? children(state) : state.empty ? children : null
   return usePart(selectPrimitive, "empty", {}, { ...props, children: content })
 }
 
@@ -392,10 +388,9 @@ function SelectItemText({
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
   const part = { id: item.value as string, text: textToMark(children, label) }
-  const content =
-    isStateFunction(children)
-      ? children
-      : (state: SelectItemTextState) => markSegments(state.segments)
+  const content = isStateFunction(children)
+    ? children
+    : (state: SelectItemTextState) => markSegments(state.segments)
   return usePart(
     selectPrimitive,
     "item-text",
