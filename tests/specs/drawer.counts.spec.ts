@@ -24,8 +24,11 @@ async function measureOpen(
   await expect(dialog).toBeVisible()
   await page.keyboard.press("Escape")
   await expect(dialog).toBeHidden()
+  // An idle period can take long to come on a busy machine, and the wait only
+  // lets one-time work settle, so it's bounded.
   await page.evaluate(
-    () => new Promise((resolve) => requestIdleCallback(resolve))
+    () =>
+      new Promise((resolve) => requestIdleCallback(resolve, { timeout: 2000 }))
   )
   await waitFrames(page, 2)
   const result = await countRestyles(page, async () => {
