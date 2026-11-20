@@ -88,10 +88,13 @@ test("the page behind an open modal dialog takes no step from an agent, and the 
   await open("agent-reach", { agent: "" })
   await page.getByRole("button", { name: dialog.trigger }).click()
   await expect(page.getByRole("dialog", { name: dialog.title })).toBeVisible()
-  expect(await listed(page, `${shown} field`)).toEqual({
-    disabled: true,
-    actions: [],
-  })
+  // The page freezes a paint after the dialog opens.
+  await expect
+    .poll(() => listed(page, `${shown} field`))
+    .toEqual({
+      disabled: true,
+      actions: [],
+    })
   await refusesBoth(page, shown)
   expect(await step(page, `${dialog.name} field`, "setValue", "Ada")).toBe(true)
   expect(await lastAction(page)).toBe(`${dialog.name} set`)

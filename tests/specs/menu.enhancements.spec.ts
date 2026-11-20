@@ -88,9 +88,10 @@ test.describe("enhancements", { tag: "@enhancement" }, () => {
     )
     await page.getByRole("button", { name: "File" }).click()
     await expect(menuNamed(page, "File")).toBeVisible()
-    expect(
-      await page.evaluate(() => document.documentElement.style.overflow)
-    ).toBe("hidden")
+    // The page freezes a paint after the menu opens.
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.style.overflow))
+      .toBe("hidden")
     expect(
       await page
         .getByRole("button", { name: "Before" })

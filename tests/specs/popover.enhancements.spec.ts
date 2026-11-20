@@ -99,7 +99,8 @@ test.describe("enhancements", { tag: "@enhancement" }, () => {
         .evaluate((el) => (el as HTMLElement).inert)
     await trigger(page).click()
     await expect(dialog(page)).toBeVisible()
-    expect(await inert()).toBe(true)
+    // The page freezes a paint after the popover opens.
+    await expect.poll(inert).toBe(true)
     await page.keyboard.press("Escape")
     await expect(dialog(page)).toBeHidden()
     expect(await inert()).toBe(false)
@@ -115,11 +116,14 @@ test.describe("enhancements", { tag: "@enhancement" }, () => {
     await open("popover", { modal: "true" })
     await trigger(page).click()
     await expect(dialog(page)).toBeVisible()
-    expect(
-      await page
-        .locator("button", { hasText: "Before" })
-        .evaluate((el) => (el as HTMLElement).inert)
-    ).toBe(true)
+    // The page freezes a paint after the popover opens.
+    await expect
+      .poll(() =>
+        page
+          .locator("button", { hasText: "Before" })
+          .evaluate((el) => (el as HTMLElement).inert)
+      )
+      .toBe(true)
     expect(
       await page.locator("output").evaluate((el) => !!el.closest("[inert]"))
     ).toBe(false)
