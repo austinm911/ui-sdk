@@ -88,6 +88,9 @@ default` fallback. Pass them on as `children={children}`.
   function passed by name, like `{dataItems}`, is called as a component with
   props. Default content for `children` is a function returning the markup,
   like `defaultTriggerContent` in `select.tsrx`.
+- **Render order.** Octane renders shallower components first, so a sibling
+  wrapped in `@if` can bind after the part beside it. Core must not depend on
+  sibling bind order.
 - **Rows** that React builds with `.map` become a small component rendered
   by a keyed `@for`.
 - **Types.** Content is `unknown`, not `React.ReactNode`, and a component
