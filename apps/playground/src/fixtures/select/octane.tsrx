@@ -33,6 +33,9 @@ import {
 
 const controller = createSelectController<string, boolean>()
 
+// One or several values, as ?multiple says.
+const AnySelect = Select<string, boolean>
+
 type ItemData = { value: string; label: string; disabled?: boolean }
 
 function Item({ value, label, disabled }: ItemData) {
@@ -203,7 +206,7 @@ function Fixture({ data = false }: { data?: boolean }) {
               {trigger}
             </Field>
           }
-          <Select
+          <AnySelect
             {...options}
             name={f.name}
             placeholder={f.placeholder}
@@ -283,7 +286,7 @@ function Fixture({ data = false }: { data?: boolean }) {
                 <Items list={list} grouped={grouped} selectAll={selectAll} />
               </SelectContent>
             }
-          </Select>
+          </AnySelect>
         </Wrap>
         <button type="submit">{"Submit"}</button>
         <button type="reset">{"Reset"}</button>

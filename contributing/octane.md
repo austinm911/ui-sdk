@@ -71,7 +71,8 @@ Then make these changes.
   `const tree = usePopupTree()`, pass `ref: mergeRefs<HTMLDivElement>(ref, tree.track)` to `usePart`, and return `element && renderPopup(element,
 target, tree)`. See `SelectContent`.
 - **No type arguments on a JSX tag,** like `<Select<string, boolean>>`.
-  Prettier's `.tsrx` parser rejects them. Let the props infer the types.
+  Prettier's `.tsrx` parser rejects them. Let the props infer the types, or
+  name an instantiation first: `const AnySelect = Select<string, boolean>`.
 - **Types.** Content is `unknown`, not `React.ReactNode`, and a component
   returns what its JSX returns. Never use `any` beyond what the React file
   already has. A cast needs a comment that says why it holds.
