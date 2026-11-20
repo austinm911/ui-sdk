@@ -105,8 +105,8 @@ test.describe("work per interaction in a long select", () => {
       // A snippet can't be read before it renders, so the root finds no label
       // and mounts the options hidden to learn it, like a value from a controller.
       test.skip(
-        framework.startsWith("svelte"),
-        "Svelte roots can't read their items' labels before they mount."
+        framework.startsWith("svelte") || framework === "octane",
+        "Svelte and Octane roots can't read their items' labels before they mount."
       )
       await open("select-perf", { n: String(n) })
       await expect(page.getByRole("combobox", { name: "Pick" })).toHaveText(

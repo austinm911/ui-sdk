@@ -778,9 +778,6 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
     }
   })
 
-  // Once the parts in this commit bound, their store writes land, before
-  // paint and before the next input: Octane runs passive effects after paint.
-  React.useLayoutEffect(() => afterCommit(rendered))
 
   // A new key is a new part, and a new value the part selects on needs a new subscription.
   const selected = selectedKeys(part, props)
@@ -808,6 +805,10 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
       unsubscribe()
     }
   })
+  // Once the parts in this commit bound and subscribed, their store writes
+  // land, before paint and before the next input: Octane attaches every ref
+  // before any layout effect, and runs passive effects after paint.
+  React.useLayoutEffect(() => afterCommit(rendered))
 
   return state as StateOf<P, S>
 }

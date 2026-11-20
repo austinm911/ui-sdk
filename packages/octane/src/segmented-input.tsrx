@@ -1,0 +1,103 @@
+"use strong"
+// What Date Input and Time Input render alike: the root with its segments and
+// hidden input, and a segment, which is an input or the text between inputs.
+import type {
+  dateInput,
+  DateInputSegmentData,
+  DateInputSegmentState,
+  DateInputState,
+} from "@ui-sdk/core/date-input"
+import { controlRender, type useFieldControl } from "./field-context.tsrx"
+import { isStateFunction } from "./render-element.tsrx"
+import {
+  renderElement,
+  usePart,
+  type PartProps,
+  type usePrimitive,
+} from "./use-primitive.tsrx"
+
+type RootProps = Omit<
+  PartProps<"div", DateInputState>,
+  "defaultValue" | "onChange"
+>
+
+type SegmentProps = Omit<
+  PartProps<"input", DateInputSegmentState>,
+  "value" | "defaultValue" | "children"
+> & {
+  /** The segment it shows, from the root's `segments`. */
+  segment: DateInputSegmentData
+  /** The text between segments, which it shows unless it has children. Segments you type in take none. */
+  children?: unknown
+}
+
+// Time Input's primitive has the same slots and state.
+type Segmented = typeof dateInput
+
+// The core writes an input's text as it changes, so Octane only renders where it starts.
+function useSegment(
+  primitive: Segmented,
+  { segment, render, children, ...props }: SegmentProps
+) {
+  const own = { segment, id: segment.key }
+  const input = (merged: Record<string, any>, state: DateInputSegmentState) => {
+    const { value, ...rest } = merged
+    return renderElement(
+      "input",
+      { ...rest, defaultValue: value },
+      render,
+      state
+    )
+  }
+  const part = segment.editable
+    ? { ...props, render: input }
+    : { ...props, render, children: children ?? segment.text }
+  return usePart(
+    primitive,
+    "segment",
+    own,
+    part as object,
+    segment.editable ? "input" : "span"
+  )
+}
+
+function useSegmentedRoot(
+  primitive: Segmented,
+  instance: ReturnType<typeof usePrimitive<Segmented>>,
+  field: ReturnType<typeof useFieldControl>,
+  { render, children, ...props }: RootProps,
+  Segment: (props: SegmentProps) => unknown
+) {
+  const content = (state: DateInputState) => (
+    <>
+      @if (children === undefined) {
+        @for (const segment of state.segments; key segment.key) {
+          <Segment segment={segment} />
+        }
+      } @else if (isStateFunction(children)) {
+        <>{children(state)}</>
+      } @else {
+        <>{children}</>
+      }
+      <HiddenInput primitive={primitive} />
+    </>
+  )
+  return usePart(
+    instance,
+    "root",
+    {},
+    { ...props, children: content, render: controlRender(field, "div", render) }
+  )
+}
+
+function HiddenInput({ primitive }: { primitive: Segmented }) {
+  return usePart(primitive, "hidden-input", {}, {}, "input")
+}
+
+export {
+  useSegment,
+  useSegmentedRoot,
+  type RootProps,
+  type SegmentProps,
+  type Segmented,
+}
