@@ -11,12 +11,13 @@ type Env = {
   controller?: AccordionController
 }
 
-type Framework = "react" | "vue" | "web"
+type Framework = "react" | "vue" | "web" | "octane"
 
 const frameworks: Record<Framework, string> = {
   react: "React",
   vue: "Vue",
   web: "Web Components",
+  octane: "Octane",
 }
 
 // The items a variant renders.
