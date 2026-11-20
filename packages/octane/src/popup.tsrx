@@ -189,7 +189,11 @@ function TreeEffect({
 // and takes it and the popups in it out of the top layer. Focus leaves it
 // first, since the browser would move it back to where it was before the
 // popup opened. Returns what shows it again.
-function hide(el: HTMLElement) {
+function hide(tracked: HTMLElement) {
+  // A sheet's content sits in the viewport that goes into the top layer,
+  // which React's ref reached and Octane's doesn't, so the viewport hides.
+  const parent = tracked.parentElement
+  const el = parent?.matches('[data-slot$="-viewport"]') ? parent : tracked
   const doc = el.ownerDocument
   if (el.contains(doc.activeElement)) {
     ;(doc.activeElement as HTMLElement).blur()
