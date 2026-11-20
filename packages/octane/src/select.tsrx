@@ -26,7 +26,7 @@ import * as React from "octane"
 import { isStateFunction } from "./render-element.tsrx"
 import { Placed, usePlaceContent, usePlacedContent } from "./children.tsrx"
 import { controlRender, useFieldControl } from "./field-context.tsrx"
-import { markSegments, textToMark } from "./list-text.tsrx"
+import { useItemText } from "./list-text.tsrx"
 import {
   Connected,
   renderPopup,
@@ -380,6 +380,7 @@ const SelectItem = parts.Item as <T = string>(
  */
 function SelectItemText({
   children,
+  ref,
   ...props
 }: PartProps<"span", SelectItemTextState>) {
   const item = useAround(selectPrimitive, "item")
@@ -387,15 +388,20 @@ function SelectItemText({
     throw new Error("<SelectItemText> must be used inside <SelectItem>.")
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
-  const part = { id: item.value as string, text: textToMark(children, label) }
+  const itemText = useItemText(children, item.value as string, label)
+  const part = { id: item.value as string, text: itemText.text }
   const content = isStateFunction(children)
     ? children
-    : (state: SelectItemTextState) => markSegments(state.segments)
+    : (state: SelectItemTextState) => itemText.content(state.segments)
   return usePart(
     selectPrimitive,
     "item-text",
     part,
-    { ...props, children: content },
+    {
+      ...props,
+      ref: mergeRefs<HTMLSpanElement>(ref, itemText.ref),
+      children: content,
+    },
     "span"
   )
 }

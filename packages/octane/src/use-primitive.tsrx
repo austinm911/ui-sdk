@@ -22,7 +22,6 @@ import {
   ref,
   release,
   renderVersion,
-  runBindWrites,
   sameSlotState,
   sameValue,
   schemaOf,
@@ -624,12 +623,6 @@ function changesValues(
   return false
 }
 
-// Runs the store writes parts queued while binding, after the commit that
-// showed `render`.
-function afterCommit(_render: object) {
-  runBindWrites()
-}
-
 // Subscribes `part` with its committed `props`, whose selection is `selected`:
 // passed so a new selection subscribes again.
 function subscribeSelecting(
@@ -778,7 +771,6 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
     }
   })
 
-
   // A new key is a new part, and a new value the part selects on needs a new subscription.
   const selected = selectedKeys(part, props)
   // Subscribed as the part commits, since subscribing also leases the part,
@@ -805,10 +797,6 @@ function usePartState<P extends Primitive, S extends SlotName<P>>(
       unsubscribe()
     }
   })
-  // Once the parts in this commit bound and subscribed, their store writes
-  // land, before paint and before the next input: Octane attaches every ref
-  // before any layout effect, and runs passive effects after paint.
-  React.useLayoutEffect(() => afterCommit(rendered))
 
   return state as StateOf<P, S>
 }

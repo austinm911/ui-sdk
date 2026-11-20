@@ -14,10 +14,10 @@ import {
   type CommandShortcutState,
 } from "@ui-sdk/core/command"
 import * as React from "octane"
-import { isStateFunction } from "./render-element.tsrx"
+import { isStateFunction, mergeRefs } from "./render-element.tsrx"
 import { Placed, usePlaceContent, usePlacedContent } from "./children.tsrx"
 import { useControllerEntry } from "./controller-target.tsrx"
-import { markSegments, textToMark } from "./list-text.tsrx"
+import { useItemText } from "./list-text.tsrx"
 import {
   createParts,
   useAround,
@@ -197,6 +197,7 @@ function CommandItem({
  */
 function CommandItemText({
   children,
+  ref,
   ...props
 }: PartProps<"span", CommandItemTextState>) {
   const item = useAround(commandPrimitive, "item")
@@ -204,15 +205,20 @@ function CommandItemText({
     throw new Error("<CommandItemText> must be used inside <CommandItem>.")
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
-  const part = { id: item.value as string, text: textToMark(children, label) }
+  const itemText = useItemText(children, item.value as string, label)
+  const part = { id: item.value as string, text: itemText.text }
   const content = isStateFunction(children)
     ? children
-    : (state: CommandItemTextState) => markSegments(state.segments)
+    : (state: CommandItemTextState) => itemText.content(state.segments)
   return usePart(
     commandPrimitive,
     "item-text",
     part,
-    { ...props, children: content },
+    {
+      ...props,
+      ref: mergeRefs<HTMLSpanElement>(ref, itemText.ref),
+      children: content,
+    },
     "span"
   )
 }

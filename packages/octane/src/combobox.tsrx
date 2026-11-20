@@ -33,7 +33,7 @@ import * as React from "octane"
 import { isStateFunction } from "./render-element.tsrx"
 import { Placed, usePlaceContent, usePlacedContent } from "./children.tsrx"
 import { controlRender, useFieldControl } from "./field-context.tsrx"
-import { markSegments, textToMark } from "./list-text.tsrx"
+import { useItemText } from "./list-text.tsrx"
 import {
   renderPopup,
   SheetHeaderContext,
@@ -267,6 +267,7 @@ const ComboboxItem = parts.Item as <T = string>(
  */
 function ComboboxItemText({
   children,
+  ref,
   ...props
 }: PartProps<"span", ComboboxItemTextState>) {
   const item = useAround(comboboxPrimitive, "item")
@@ -274,15 +275,20 @@ function ComboboxItemText({
     throw new Error("<ComboboxItemText> must be used inside <ComboboxItem>.")
   }
   const label = (item.label as string | undefined) ?? (item.value as string)
-  const part = { id: item.value as string, text: textToMark(children, label) }
+  const itemText = useItemText(children, item.value as string, label)
+  const part = { id: item.value as string, text: itemText.text }
   const content = isStateFunction(children)
     ? children
-    : (state: ComboboxItemTextState) => markSegments(state.segments)
+    : (state: ComboboxItemTextState) => itemText.content(state.segments)
   return usePart(
     comboboxPrimitive,
     "item-text",
     part,
-    { ...props, children: content },
+    {
+      ...props,
+      ref: mergeRefs<HTMLSpanElement>(ref, itemText.ref),
+      children: content,
+    },
     "span"
   )
 }

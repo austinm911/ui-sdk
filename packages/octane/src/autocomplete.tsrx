@@ -15,7 +15,7 @@ import * as React from "octane"
 import { isStateFunction } from "./render-element.tsrx"
 import { Placed, usePlaceContent, usePlacedContent } from "./children.tsrx"
 import { controlRender, useFieldControl } from "./field-context.tsrx"
-import { markSegments, textToMark } from "./list-text.tsrx"
+import { useItemText } from "./list-text.tsrx"
 import {
   renderPopup,
   SheetHeaderContext,
@@ -233,6 +233,7 @@ const AutocompleteItem = parts.Item as (
  */
 function AutocompleteItemText({
   children,
+  ref,
   ...props
 }: PartProps<"span", AutocompleteItemTextState>) {
   const item = useAround(autocompletePrimitive, "item")
@@ -241,18 +242,21 @@ function AutocompleteItemText({
       "<AutocompleteItemText> must be used inside <AutocompleteItem>."
     )
   }
-  const part = {
-    id: item.value as string,
-    text: textToMark(children, (item.label ?? item.value) as string),
-  }
+  const label = (item.label ?? item.value) as string
+  const itemText = useItemText(children, item.value as string, label)
+  const part = { id: item.value as string, text: itemText.text }
   const content = isStateFunction(children)
     ? children
-    : (state: AutocompleteItemTextState) => markSegments(state.segments)
+    : (state: AutocompleteItemTextState) => itemText.content(state.segments)
   return usePart(
     autocompletePrimitive,
     "item-text",
     part,
-    { ...props, children: content },
+    {
+      ...props,
+      ref: mergeRefs<HTMLSpanElement>(ref, itemText.ref),
+      children: content,
+    },
     "span"
   )
 }
