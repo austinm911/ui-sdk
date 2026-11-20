@@ -84,6 +84,10 @@ props.value)`, since `useState(props.value)` is rejected. A remount is
 default` fallback. Pass them on as `children={children}`.
   A child expression that holds a function, like `{error(name)}`, is
   wrapped as a children block too, so pass it as a `children={...}` prop.
+- **A state function child is written inline,** `{(state) => ...}`. A
+  function passed by name, like `{dataItems}`, is called as a component with
+  props. Default content for `children` is a function returning the markup,
+  like `defaultTriggerContent` in `select.tsrx`.
 - **Rows** that React builds with `.map` become a small component rendered
   by a keyed `@for`.
 - **Types.** Content is `unknown`, not `React.ReactNode`, and a component
