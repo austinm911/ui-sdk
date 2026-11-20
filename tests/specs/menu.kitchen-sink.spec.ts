@@ -4,7 +4,7 @@ import { expect, test } from "../fixtures"
 // only proves every variant renders and opens without errors.
 test("every kitchen sink variant opens", async ({ page, framework }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(90_000)

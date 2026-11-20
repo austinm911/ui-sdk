@@ -8,12 +8,13 @@ type Env = {
   controls: (buttons: [string, () => unknown][]) => void
 }
 
-type Framework = "react" | "vue" | "web"
+type Framework = "react" | "vue" | "web" | "octane"
 
 const frameworks: Record<Framework, string> = {
   react: "React",
   vue: "Vue",
   web: "Web Components",
+  octane: "Octane",
 }
 
 // What a form submits, as a query string.

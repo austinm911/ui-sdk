@@ -338,7 +338,7 @@ const kitchenSink = (framework: string) =>
 
 async function load(page: Page, framework: string) {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   await page.goto(kitchenSink(framework))

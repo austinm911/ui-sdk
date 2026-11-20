@@ -7,7 +7,7 @@ test("every waterfall kitchen sink variant renders its rows", async ({
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

@@ -1147,7 +1147,11 @@ function treeApiBody(
         }
         toggleChecked(key, { reason: "item-press", event })
       },
-      bindItem(el: HTMLElement, part: Item) {
+      bindItem(
+        el: HTMLElement,
+        part: Item,
+        rendered: (listener: () => void) => () => void
+      ) {
         const cleanups = [roving.bind(el, part), recovery.bind(el, part)]
         const parent = part.props.parent ?? ""
         let siblings = byParent.get(parent)
@@ -1158,9 +1162,22 @@ function treeApiBody(
         boundParent.set(el, parent)
         bumpSiblings(parent)
         bump()
-        if (isBranch(part.key, part.props) && inDeep(part.key)) {
+        let wasBranch = isBranch(part.key, part.props)
+        if (wasBranch && inDeep(part.key)) {
           queueDeep(part.key)
         }
+        // An item that learns it's a branch after it bound, like one whose
+        // group says so as it mounts, expands deeply too. Only the change
+        // counts, so a branch the user collapsed stays collapsed.
+        cleanups.push(
+          rendered(() => {
+            const branch = isBranch(part.key, part.props)
+            if (branch && !wasBranch && inDeep(part.key)) {
+              queueDeep(part.key)
+            }
+            wasBranch = branch
+          })
+        )
         return () => {
           cleanups.forEach((cleanup) => cleanup())
           siblings.delete(part.key)

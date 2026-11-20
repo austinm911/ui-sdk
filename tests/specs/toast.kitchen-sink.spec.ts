@@ -8,7 +8,7 @@ test("every kitchen sink variant shows a toast", async ({
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

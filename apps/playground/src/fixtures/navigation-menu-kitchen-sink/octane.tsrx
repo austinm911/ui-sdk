@@ -1,0 +1,235 @@
+"use strong"
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@ui-sdk/octane/navigation-menu"
+import * as React from "octane"
+import { createRoot } from "octane"
+import * as classes from "./classes"
+import { kitchenSink, type Env } from "./shell"
+import {
+  hasViewport,
+  href,
+  items,
+  moreLinks,
+  nestedLinks,
+  type Item,
+  type Variant,
+} from "./variants"
+
+// The long body's links, which name themselves.
+const longLinks = Array.from({ length: 30 }, (_, index) => ({
+  label: `Product ${index + 1}`,
+  description: "",
+}))
+
+function Chevron() {
+  return (
+    <svg
+      className={classes.chevron}
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M3 4.5 6 7.5l3-3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function Link({
+  variant,
+  label,
+  description,
+  closeOnSelect,
+}: {
+  variant: Variant
+  label: string
+  description?: string | undefined
+  closeOnSelect?: boolean | undefined
+}) {
+  return (
+    <li>
+      <NavigationMenuLink
+        className={classes.link}
+        href={href(variant, label)}
+        closeOnSelect={closeOnSelect}
+      >
+        <span className={classes.linkTitle}>{label}</span>
+        @if (description) {
+          <span className={classes.linkDescription}>{description}</span>
+        }
+      </NavigationMenuLink>
+    </li>
+  )
+}
+
+// A vertical menu inside the first panel, whose content is its own popup.
+function Nested({ variant, env }: { variant: Variant; env: Env }) {
+  return (
+    <NavigationMenu
+      orientation="vertical"
+      className={classes.nestedRoot}
+      onValueChange={(value, { reason }) =>
+        env.log(`nested valueChange ${value} (${reason})`)
+      }
+    >
+      <NavigationMenuList className={classes.list}>
+        <NavigationMenuItem value="learn">
+          <NavigationMenuTrigger className={classes.trigger}>
+            {"Learn "}
+            <Chevron />
+          </NavigationMenuTrigger>
+          <NavigationMenuContent className={classes.nestedContent}>
+            <ul className={classes.links}>
+              @for (const label of nestedLinks; key label) {
+                <Link variant={variant} label={label} />
+              }
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  )
+}
+
+function Panel({
+  variant,
+  env,
+  item,
+}: {
+  variant: Variant
+  env: Env
+  item: Item
+}) {
+  const [grown, setGrown] = React.useState(false)
+  const first = item.value === "products"
+  const menuCloses = variant.options?.closeOnSelect ?? true
+  const links = first && variant.body === "long" ? longLinks : item.links
+  // With `linkCloseOnSelect`, the first link closes the other way from the menu.
+  const rows = links.map((link, index) => ({
+    link,
+    closeOnSelect:
+      variant.linkCloseOnSelect && index === 0 ? !menuCloses : undefined,
+  }))
+  return (
+    <NavigationMenuContent
+      className={classes.content(variant, item.value, first && grown)}
+      {...variant.content}
+      anchor={hasViewport(variant) ? undefined : env.anchor}
+    >
+      <ul className={classes.links}>
+        @for (const row of rows; key row.link.label) {
+          <Link
+            variant={variant}
+            label={row.link.label}
+            description={row.link.description}
+            closeOnSelect={row.closeOnSelect}
+          />
+        }
+        @if (grown) {
+          @for (const label of moreLinks; key label) {
+            <Link variant={variant} label={label} />
+          }
+        }
+      </ul>
+      @if (first && variant.body === "dynamic") {
+        <button className={classes.more} onClick={() => setGrown(!grown)}>
+          {grown ? "Show less" : "Show more"}
+        </button>
+      }
+      @if (first && variant.body === "nested") {
+        <Nested variant={variant} env={env} />
+      }
+    </NavigationMenuContent>
+  )
+}
+
+function VariantMenu({ variant, env }: { variant: Variant; env: Env }) {
+  const [value, setValue] = React.useState<string | null>(null)
+
+  // The select outside the menu shares the controlled value.
+  React.useEffect(() => {
+    const select = env.select
+    if (!select) {
+      return
+    }
+    const change = () => setValue(select.value || null)
+    select.addEventListener("change", change)
+    return () => select.removeEventListener("change", change)
+  })
+  React.useEffect(() => {
+    if (env.select) {
+      env.select.value = value ?? ""
+    }
+  })
+
+  return (
+    <NavigationMenu
+      id={env.navId}
+      aria-label={`Main ${variant.id}`}
+      className={classes.root}
+      {...variant.options}
+      {...(variant.controlled && { value })}
+      container={env.container}
+      controller={env.controller}
+      onValueChange={(next, details) => {
+        env.log(`valueChange ${next} (${details.reason})`)
+        if (variant.controlled && !details.canceled) {
+          setValue(next)
+        }
+      }}
+      onOpenChangeComplete={(open) => env.log(`openChangeComplete ${open}`)}
+    >
+      <NavigationMenuList className={classes.list}>
+        @for (const item of items; key item.value) {
+          <NavigationMenuItem value={item.value}>
+            <NavigationMenuTrigger
+              className={classes.trigger}
+              disabled={variant.disabled === item.value}
+            >
+              {`${item.label} `}
+              <Chevron />
+            </NavigationMenuTrigger>
+            <Panel variant={variant} env={env} item={item} />
+          </NavigationMenuItem>
+        }
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            className={classes.topLink}
+            href={href(variant, "pricing")}
+            current={variant.activeLink !== false}
+          >
+            {"Pricing"}
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+      <NavigationMenuIndicator className={classes.indicator} />
+      @if (hasViewport(variant)) {
+        <NavigationMenuViewport
+          className={classes.viewport(variant.animation)}
+          {...(variant.viewport || {})}
+          anchor={env.anchor}
+        />
+      }
+    </NavigationMenu>
+  )
+}
+
+function mount(root: HTMLElement) {
+  kitchenSink(root, "octane", (slot, variant, env) =>
+    createRoot(slot).render(<VariantMenu variant={variant} env={env} />)
+  )
+}
+
+export { mount }

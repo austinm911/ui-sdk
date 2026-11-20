@@ -131,6 +131,19 @@ type PopupCloseReason =
   | "swipe"
 
 // Every `modal` value is a point in the triple.
+// The nearest sibling of `node` that isn't the popup or inside it.
+function outside(
+  popup: Element,
+  node: Element,
+  step: "nextElementSibling" | "previousElementSibling"
+) {
+  let sibling = node[step]
+  while (sibling && popup.contains(sibling)) {
+    sibling = sibling[step]
+  }
+  return sibling
+}
+
 function modalTriple(modal: Modal) {
   return {
     consumeOutsidePress: modal === true || modal === "pointer",
@@ -1109,10 +1122,12 @@ function createPopupLayer<
       node && node !== el.ownerDocument.body;
       node = node.parentElement
     ) {
+      // Neighbours outside the popup: content rendered beside its trigger
+      // leaves when it closes, and kept here it would stay in memory.
       path.push({
         node,
-        next: node.nextElementSibling,
-        previous: node.previousElementSibling,
+        next: outside(el, node, "nextElementSibling"),
+        previous: outside(el, node, "previousElementSibling"),
       })
     }
 

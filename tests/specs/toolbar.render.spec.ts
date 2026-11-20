@@ -55,7 +55,7 @@ test.describe("custom rendering", () => {
     tab,
   }) => {
     test.skip(
-      !framework.startsWith("react"),
+      !framework.startsWith("react") && framework !== "octane",
       "Only React parts render by the state they read."
     )
     const renders = () =>

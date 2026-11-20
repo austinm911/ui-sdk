@@ -7,7 +7,7 @@ test("every kitchen sink variant opens against its edge and closes", async ({
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(240_000)

@@ -751,6 +751,8 @@ function createListboxEngine(
       pinned.delete(key)
       if (!registry.size()) {
         moves?.disconnect()
+        // The cached listing holds the items' elements, gone with the last one.
+        composedMemo = undefined
       }
       config.onRegister?.(key)
       queueMicrotask(() => left(key, el))

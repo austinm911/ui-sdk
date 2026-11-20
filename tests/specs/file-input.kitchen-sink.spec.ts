@@ -9,7 +9,7 @@ test("every file input kitchen sink variant works", async ({
   framework,
 }, testInfo) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

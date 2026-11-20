@@ -7,7 +7,7 @@ test("every form controls kitchen sink variant works", async ({
   framework,
 }) => {
   test.skip(
-    !["react", "vue", "web"].includes(framework),
+    !["react", "vue", "web", "octane"].includes(framework),
     "Composition frameworks only."
   )
   test.setTimeout(120_000)

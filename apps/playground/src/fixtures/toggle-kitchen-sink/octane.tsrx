@@ -1,0 +1,211 @@
+"use strong"
+import { Button } from "@ui-sdk/octane/button"
+import {
+  createToggleController,
+  createToggleGroupController,
+  Toggle,
+  ToggleGroup,
+} from "@ui-sdk/octane/toggle"
+import { Separator } from "@ui-sdk/octane/separator"
+import * as React from "octane"
+import { createRoot } from "octane"
+import * as classes from "./classes"
+import { kitchenSink, type Env } from "./shell"
+import { items, pendingAction, type Variant } from "./variants"
+
+const span = (props: Record<string, unknown>) => <span {...props} />
+const link = (props: Record<string, unknown>) => (
+  <a {...props} href="#kitchen-sink-link" />
+)
+const hr = (props: Record<string, unknown>) => <hr {...props} />
+
+function VariantToggle({ variant, env }: { variant: Variant; env: Env }) {
+  const [pressed, setPressed] = React.useState(false)
+  const controller = React.useInitialValue(() =>
+    variant.controller ? createToggleController() : undefined
+  )
+  React.useEffect(() => {
+    if (!controller) {
+      return
+    }
+    env.controls([
+      ["toggle()", () => controller.toggle()],
+      ["setPressed(true)", () => controller.setPressed(true)],
+      ["isPressed()", () => controller.isPressed()],
+      ["focus()", () => controller.focus()],
+    ])
+  })
+  return (
+    <Toggle
+      className={classes.toggle}
+      {...variant.options}
+      {...(variant.controlled && { pressed })}
+      controller={controller}
+      render={variant.render === "span" ? span : undefined}
+      onPressedChange={(next, details) => {
+        if (variant.cancel) {
+          return details.cancel()
+        }
+        if (variant.controlled) {
+          setPressed(next)
+        }
+        env.log(`pressedChange ${next} (${details.reason}, ${details.source})`)
+      }}
+    >
+      {"Bookmark"}
+    </Toggle>
+  )
+}
+
+function VariantGroup({ variant, env }: { variant: Variant; env: Env }) {
+  const [value, setValue] = React.useState<string[]>([])
+  const controller = React.useInitialValue(() =>
+    variant.controller ? createToggleGroupController() : undefined
+  )
+  React.useEffect(() => {
+    if (!controller) {
+      return
+    }
+    env.controls([
+      [
+        "setValue([bold, italic])",
+        () => controller.setValue(["bold", "italic"]),
+      ],
+      ["toggle(underline)", () => controller.toggle("underline")],
+      ["getValue()", () => controller.getValue()],
+      ["focus()", () => controller.focus()],
+    ])
+  })
+  const list: { value: string; label: string; disabled?: boolean }[] =
+    items[variant.items ?? "alignment"]
+  return (
+    <ToggleGroup
+      className={classes.group}
+      aria-label={variant.title}
+      {...variant.options}
+      {...(variant.controlled && { value })}
+      controller={controller}
+      onValueChange={(next, details) => {
+        if (variant.cancel) {
+          return details.cancel()
+        }
+        if (variant.controlled) {
+          setValue(next)
+        }
+        env.log(`valueChange [${next}] (${details.reason}, ${details.source})`)
+      }}
+    >
+      @for (const item of list; key item.value) {
+        <Toggle
+          className={classes.toggle}
+          value={item.value}
+          disabled={item.disabled}
+          render={variant.render === "span" ? span : undefined}
+        >
+          {item.label}
+        </Toggle>
+      }
+    </ToggleGroup>
+  )
+}
+
+function VariantButton({ variant, env }: { variant: Variant; env: Env }) {
+  const onClick = () => {
+    env.log("click")
+    if (variant.action !== "resolve" && variant.action !== "reject") {
+      return
+    }
+    return pendingAction(variant).then(
+      () => env.log("done"),
+      (error: Error) => {
+        env.log(`failed: ${error.message}`)
+        throw error
+      }
+    )
+  }
+  const render =
+    variant.render === "link"
+      ? link
+      : variant.render === "span"
+        ? span
+        : undefined
+  const label =
+    variant.form === "reset"
+      ? "Reset"
+      : variant.render === "link"
+        ? "Docs"
+        : "Save"
+  const button = (
+    <Button
+      className={classes.button}
+      {...variant.options}
+      type={variant.form}
+      render={render}
+      onClick={variant.action ? onClick : undefined}
+    >
+      {label}
+    </Button>
+  )
+  if (!variant.form) {
+    return button
+  }
+  return (
+    <form
+      className="flex items-center gap-2"
+      onSubmit={(event: SubmitEvent) => {
+        event.preventDefault()
+        env.log("submit")
+      }}
+      onReset={() => env.log("reset")}
+    >
+      <input
+        className="h-8 w-28 rounded-md border border-neutral-200 px-2 text-[13px]"
+        aria-label="Name"
+        defaultValue="Ada"
+      />
+      {button}
+    </form>
+  )
+}
+
+function VariantSeparator({ variant }: { variant: Variant }) {
+  return (
+    <div
+      className={
+        variant.options?.orientation === "vertical"
+          ? classes.row
+          : classes.column
+      }
+    >
+      <span>{"Blog"}</span>
+      <Separator
+        className={classes.separator}
+        {...variant.options}
+        render={variant.render === "hr" ? hr : undefined}
+      />
+      <span>{"Docs"}</span>
+    </div>
+  )
+}
+
+function VariantPart({ variant, env }: { variant: Variant; env: Env }) {
+  if (variant.section === "Toggle") {
+    return <VariantToggle variant={variant} env={env} />
+  }
+  if (variant.section === "Toggle Group") {
+    return <VariantGroup variant={variant} env={env} />
+  }
+  if (variant.section === "Button") {
+    return <VariantButton variant={variant} env={env} />
+  }
+  return <VariantSeparator variant={variant} />
+}
+
+function mount(root: HTMLElement) {
+  // The shell names only the frameworks it links between, so it's told React.
+  kitchenSink(root, "octane", (slot, variant, env) =>
+    createRoot(slot).render(<VariantPart variant={variant} env={env} />)
+  )
+}
+
+export { mount }

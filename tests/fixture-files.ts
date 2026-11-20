@@ -15,7 +15,7 @@ const specRoot = fileURLToPath(new URL("specs/", import.meta.url))
 
 /** Whether the playground has `fixture` for `framework`, like "menu" for "react-ssr". */
 function hasFixture(fixture: string, framework: string) {
-  return ["ts", "tsx"].some((extension) =>
+  return ["ts", "tsx", "tsrx"].some((extension) =>
     existsSync(`${fixtureRoot}${fixture}/${framework}.${extension}`)
   )
 }
@@ -26,7 +26,7 @@ function hasFixture(fixture: string, framework: string) {
  * the composition frameworks, so they're listed too, except for those.
  */
 function specsThatSkip(framework: string) {
-  const composition = ["react", "vue", "web"].includes(framework)
+  const composition = ["react", "vue", "web", "octane"].includes(framework)
   return specFixtures().flatMap(({ file, fixtures }) => {
     if (file.endsWith(".kitchen-sink.spec.ts")) {
       return composition ? [] : [file]

@@ -74,7 +74,7 @@ test.describe("custom rendering", () => {
 
   test("class names follow the part's state", async ({ page, framework }) => {
     test.skip(
-      !framework.startsWith("react"),
+      !framework.startsWith("react") && framework !== "octane",
       "Class functions are React only. Vue uses slot state."
     )
     const files = handle(page, "Resize files")

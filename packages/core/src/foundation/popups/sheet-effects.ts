@@ -103,6 +103,10 @@ function createSheetEffects(targets: {
   let snapExtents: readonly number[] = [1]
   let undimmedIndex = -1
   let running: Animation[] = []
+  // Plays the running motion's dim on a backdrop that binds while it runs.
+  let joinRunning: ((backdrop: HTMLElement) => void) | undefined
+  // The dim last written, for a backdrop that binds while nothing runs.
+  let writtenDim = 0
   const seeking = new Map<HTMLElement, Animation>()
   const values: Values = { dim: 0, progress: 0, expand: 0 }
   // A `::backdrop` has no inline style, so its resting dim is a paused
@@ -148,6 +152,7 @@ function createSheetEffects(targets: {
   }
 
   function writeDim(dim: number) {
+    writtenDim = dim
     const backdrop = targets.backdrop()
     if (backdrop) {
       backdrop.style.opacity = String(dim)
@@ -240,9 +245,11 @@ function createSheetEffects(targets: {
       }
       running.push(animation)
     }
+    joinRunning = (backdrop) =>
+      animate(backdrop, { opacity: [0, 1] }, samples.dim)
     const backdrop = targets.backdrop()
     if (backdrop) {
-      animate(backdrop, { opacity: [0, 1] }, samples.dim)
+      joinRunning(backdrop)
     }
     if (targets.dimmed) {
       animate(targets.dimmed, { opacity: [0, 1] }, samples.dim, backdropDim)
@@ -342,6 +349,7 @@ function createSheetEffects(targets: {
       animation.cancel()
     }
     running = []
+    joinRunning = undefined
   }
 
   function stopSeeking() {
@@ -371,7 +379,20 @@ function createSheetEffects(targets: {
     }
   }
 
+  // A backdrop that binds after the sheet opened, like one a framework
+  // mounts after its content, joins the motion or takes the resting dim.
+  function backdropBound(backdrop: HTMLElement) {
+    if (destroyed) {
+      return
+    }
+    if (joinRunning) {
+      return joinRunning(backdrop)
+    }
+    backdrop.style.opacity = String(writtenDim)
+  }
+
   return {
+    backdropBound,
     configure,
     compute,
     apply,

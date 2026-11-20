@@ -16,12 +16,13 @@ type Env = {
   anchor?: HTMLElement
 }
 
-type Framework = "react" | "vue" | "web"
+type Framework = "react" | "vue" | "web" | "octane"
 
 const frameworks: Record<Framework, string> = {
   react: "React",
   vue: "Vue",
   web: "Web Components",
+  octane: "Octane",
 }
 
 // ?delay=50 sets the delay of every variant that doesn't set its own, so a test needn't wait 600ms each.

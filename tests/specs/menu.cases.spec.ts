@@ -420,7 +420,7 @@ test("a menu with defaultOpen shows on a client-only mount @enhancement", async 
 test.describe("controlled menus", () => {
   test.beforeEach(async ({ framework, open }) => {
     test.skip(
-      !["react", "vue", "svelte"].includes(framework.split("-")[0]) ||
+      !["react", "vue", "svelte", "octane"].includes(framework.split("-")[0]) ||
         framework.includes("data")
     )
     await open("menu-cases")
